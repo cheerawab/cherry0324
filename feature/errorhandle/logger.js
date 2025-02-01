@@ -121,9 +121,11 @@ Stack Trace: ${error.stack}
    */
   error(err) {
     if (err instanceof Error) {
-      this.logger.error(`${err.message}\nStack Trace: ${err.stack}`);
+        this.logger.error(`[ERROR]: ${err.message}\nStack Trace: ${err.stack}`);
+    } else if (typeof err === 'object') {
+        this.logger.error(`[ERROR]: ${JSON.stringify(err, null, 2)}`);
     } else {
-      this.logger.error(err);
+        this.logger.error(`[ERROR]: ${err}`);
     }
   }
 }

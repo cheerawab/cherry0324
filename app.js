@@ -73,10 +73,10 @@ client.on(Events.InteractionCreate, async interaction => {
     // Check if the command is allowed in the current channel
     if (interaction.channelId !== process.env.ALLOWED_CHANNEL_ID) {
         await interaction.reply({
-            content: `❌ 這個指令只能在指定頻道內使用！請前往 <#${process.env.ALLOWED_CHANNEL_ID}> 執行指令。`,
+            content: `❌ This command can only be used in the designated channel! Please go to <#${process.env.ALLOWED_CHANNEL_ID}> to execute the command.`,
             flags: 64,
         });
-        logger.warn(`❌ 指令 ${interaction.commandName} 被拒絕，因為在不允許的頻道 ${interaction.channelId} 中執行。`);
+        logger.warn(`❌ Command ${interaction.commandName} was denied because it was executed in an unauthorized channel (${interaction.channelId}).`);
         return;
     }
 
@@ -84,7 +84,8 @@ client.on(Events.InteractionCreate, async interaction => {
         await command.execute(interaction);
     } catch (error) {
         logger.error('Command execution error:', error);
-        await interaction.reply({ content: 'An error occurred while executing this command!', ephemeral: true });
+        console.error(error);
+        await interaction.reply({ content: 'An error occurred while executing this command!', flags: 64 });
     }
 });
 
@@ -145,6 +146,9 @@ client.once(Events.ClientReady, c => {
 // Error handling
 process.on('uncaughtException', error => logger.error('Uncaught Exception:', error));
 process.on('unhandledRejection', (reason, promise) => logger.error('Unhandled Rejection at:', promise, 'reason:', reason));
+
+// Increase the maximum number of listeners
+process.setMaxListeners(20);
 
 // Bot login
 client.login(process.env.DISCORD_TOKEN).catch(error => logger.error('Failed to login:', error));

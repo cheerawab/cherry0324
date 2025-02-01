@@ -115,7 +115,7 @@ export async function askGeminiAI(threadId, userId, userName, question) {
         - 喜歡的事物：${characterData.likes?.join(", ") || "未知"}
         - 討厭的事物：${characterData.dislikes?.join(", ") || "未知"}
         - 兄弟姐妹：${characterData.siblings?.has_sibling ? `有一個${characterData.siblings.relation}，${characterData.siblings.feelings}` : "沒有兄弟姐妹"}
-        - 示例回應：${characterData.example_responses?.join("\n") || "未知"}
+        - 示例回應，參考但避免直接使用：${characterData.example_responses?.join("\n") || "未知"}
 
         你的回應應該保持這些特性。以下是你過去的對話歷史：
         ${conversationHistory.map(entry => `使用者 ${entry.userName} (${entry.userId}): ${entry.user}\n${characterData.name}: ${entry.ai}`).join('\n')}
