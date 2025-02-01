@@ -27,8 +27,8 @@ function addAIThread(threadId) {
 }
 
 export const data = new SlashCommandBuilder()
-    .setName('talk_to_ai')
-    .setDescription('Start a private conversation with AI.');
+    .setName('和希海說話')
+    .setDescription('Start a private conversation with 聰明版希海.');
 
 /**
  * Executes the command to create a private AI conversation thread.
