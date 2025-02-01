@@ -1,0 +1,14 @@
+services:
+  cherry0324-discord-bot:
+    container_name: cherry0324-discord-bot
+    build: .
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - cherry0324-discord-bot-data:/app/data
+    command: ["node", "app.js"]
+
+volumes:
+  cherry0324-discord-bot-data:
+    name: cherry0324-discord-bot-data
