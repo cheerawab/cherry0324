@@ -71,7 +71,7 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 
     // Check if the command is allowed in the current channel
-    if (interaction.channelId !== process.env.ALLOWED_CHANNEL_ID) {
+    if (!['warn', 'warnings'].includes(interaction.commandName) && interaction.channelId !== process.env.ALLOWED_CHANNEL_ID) {
         await interaction.reply({
             content: `❌ This command can only be used in the designated channel! Please go to <#${process.env.ALLOWED_CHANNEL_ID}> to execute the command.`,
             flags: 64,
