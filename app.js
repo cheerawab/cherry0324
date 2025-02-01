@@ -69,6 +69,17 @@ client.on(Events.InteractionCreate, async interaction => {
         logger.error(`No command matching ${interaction.commandName} found.`);
         return;
     }
+
+    // Check if the command is allowed in the current channel
+    if (interaction.channelId !== process.env.ALLOWED_CHANNEL_ID) {
+        await interaction.reply({
+            content: `❌ 這個指令只能在指定頻道內使用！請前往 <#${process.env.ALLOWED_CHANNEL_ID}> 執行指令。`,
+            flags: 64,
+        });
+        logger.warn(`❌ 指令 ${interaction.commandName} 被拒絕，因為在不允許的頻道 ${interaction.channelId} 中執行。`);
+        return;
+    }
+
     try {
         await command.execute(interaction);
     } catch (error) {
