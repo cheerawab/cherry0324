@@ -1,7 +1,7 @@
 import { readdirSync, statSync } from 'fs';
 import { fileURLToPath } from 'node:url';
 import path, { dirname } from 'node:path';
-import { Client, Partials, Events, Collection, GatewayIntentBits } from 'discord.js';
+import { Client, Partials, Events, Collection, GatewayIntentBits, ActivityType } from 'discord.js';
 import dotenv from 'dotenv';
 import schedule from 'node-schedule';
 import { loadDeleteSchedule, saveDeleteSchedule } from './feature/deleteschedule.js';
@@ -135,7 +135,8 @@ async function deleteChannel(channelId) {
 // Client ready event
 client.once(Events.ClientReady, c => {
     logger.info(`✅ Ready! Signed in as ${c.user.tag}`);
-    client.user.setPresence({ activities: [{ name: '音度空間' }], status: 'dnd' });
+    client.user.setPresence({ status: 'dnd' });
+    client.user.setActivity('音度空間', { type: ActivityType.Listening });
     scheduleDeletions();
     schedule.scheduleJob('0 0 * * *', () => {
         logger.info('🔄 Running daily channel deletion schedule...');
