@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "axios": "^1.7.9",
     "discord": "^0.8.2",
     "discord.js": "^14.17.3",
     "dotenv": "^16.4.7",

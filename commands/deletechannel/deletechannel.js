@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
+import { SlashCommandBuilder , PermissionsBitField} from 'discord.js';
 import { loadDeleteSchedule, saveDeleteSchedule } from '../../feature/deleteschedule.js';
 import Logger from '../../feature/errorhandle/logger.js';
 
@@ -28,7 +28,7 @@ export const execute = async (interaction) => {
         await interaction.deferReply({ flags: 64 });
 
         // Check permissions
-        if (!interaction.member.permissions.has('MANAGE_CHANNELS')) {
+        if (!interaction.memberPermissions || !interaction.memberPermissions.has(PermissionsBitField.Flags?.ManageChannels)) {
             return await interaction.editReply('❌ You do not have permission to delete channels!');
         }
 
