@@ -1,15 +1,27 @@
 import { readdirSync, statSync } from 'fs';
 import { fileURLToPath } from 'node:url';
 import path, { dirname } from 'node:path';
-import { Client, Partials, Events, Collection, GatewayIntentBits, ActivityType } from 'discord.js';
+import { Client, Partials, Events, Collection, GatewayIntentBits, ActivityType, ImportantGatewayOpcodes } from 'discord.js';
 import dotenv from 'dotenv';
 import schedule from 'node-schedule';
 import { loadDeleteSchedule, saveDeleteSchedule } from './feature/deleteschedule.js';
 import Logger from './feature/errorhandle/logger.js';
 import { execute as messageCreateHandler } from './events/messageCreate.js';
+import express from 'express';
 
 dotenv.config();
 const logger = new Logger();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
+
+app.listen(PORT, () => {
+    logger.info(`Express server running on port ${PORT}`);
+});
 
 /**
  * Initializes the Discord client with necessary intents and partials.
