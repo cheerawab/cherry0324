@@ -1,52 +1,52 @@
 import fs from 'fs';
 import path from 'path';
 
-const responsesFile = path.resolve('./feature/autoresponses/responses.json'); // 定位 JSON 檔案
+const responsesFile = path.resolve('./feature/autoresponses/responses.json'); // Locate JSON file
 let keywordResponses = {};
 
 /**
- * 讀取 JSON 檔案並更新 keywordResponses
+ * Reads the JSON file and updates keywordResponses.
  */
 function loadResponses() {
     try {
         const data = fs.readFileSync(responsesFile, 'utf8');
         keywordResponses = JSON.parse(data);
-        console.log("✅ 關鍵字回應已載入");
+        console.log("✅ Keyword responses have been loaded.");
     } catch (error) {
-        console.error("❌ 無法載入 responses.json:", error);
+        console.error("❌ Failed to load responses.json:", error);
     }
 }
 
-// 啟動時先載入回應
+// Load responses on startup
 loadResponses();
 
 /**
- * 根據訊息內容回應關鍵字（隨機回應）
- * @param {import('discord.js').Message} message - Discord 訊息物件
- * @returns {Promise<boolean>} - 是否有發送回應
+ * Replies to messages based on keyword detection (random response selection).
+ * @param {import('discord.js').Message} message - Discord message object.
+ * @returns {Promise<boolean>} - Indicates if a response was sent.
  */
 export async function handleAutoResponse(message) {
     const content = message.content.trim().toLowerCase();
 
     for (const keyword in keywordResponses) {
         if (content.includes(keyword)) {
-            const responses = keywordResponses[keyword]; // 取得回應陣列
+            const responses = keywordResponses[keyword]; // Get the response array
             if (Array.isArray(responses) && responses.length > 0) {
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)]; // 隨機選擇回應
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)]; // Select a random response
                 await message.reply(randomResponse);
-                console.log(`💬 自動回應：「${keyword}」 → 「${randomResponse}」`);
-                return true; // 表示已經回應
+                console.log(`💬 Auto-replied: "${keyword}" → "${randomResponse}"`);
+                return true; // Indicates that a response was sent
             }
         }
     }
 
-    return false; // 沒有找到符合的關鍵字
+    return false; // No matching keyword found
 }
 
 /**
- * 重新載入關鍵字回應（當 JSON 檔案有更新時可調用）
+ * Reloads keyword responses (use when the JSON file is updated).
  */
 export function reloadResponses() {
     loadResponses();
-    console.log("🔄 關鍵字回應已重新載入");
+    console.log("🔄 Keyword responses have been reloaded.");
 }
