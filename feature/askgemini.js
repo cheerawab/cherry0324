@@ -144,7 +144,7 @@ export async function askGeminiAI(threadId, userId, userName, question) {
 
         return `🌟 ${characterData.nickname}: ${reply}`;
     } catch (error) {
-        logger.error('❌ Gemini API error:', error);
+        console.error('❌ Gemini API error:', error);
         return "❌ 我好像遇到了一點問題，請稍後再試一次！";
     }
 }
