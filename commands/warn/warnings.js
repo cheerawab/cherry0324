@@ -11,7 +11,6 @@ export const data = new SlashCommandBuilder()
         option.setName('user')
             .setDescription('The user to check warnings for')
             .setRequired(true))
-    .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers);
 
 /**
  * Executes the /warnings command to retrieve a user's warning history.
