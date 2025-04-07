@@ -17,7 +17,7 @@ export const execute = async (interaction) => {
         await interaction.deferReply({ flags: 64 });
 
         if (!interaction.memberPermissions || 
-            !interaction.memberPermissions.has(PermissionsBitField.Flags.ManageChannels)) {
+            !interaction.memberPermissions.has(PermissionsBitField.Flags.BanMembers)) {
             return await interaction.editReply('❌ You do not have permission to manage channels!');
         }
 

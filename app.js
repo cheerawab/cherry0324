@@ -7,6 +7,7 @@ import schedule from 'node-schedule';
 import { loadDeleteSchedule, saveDeleteSchedule } from './feature/deleteschedule.js';
 import Logger from './feature/errorhandle/logger.js';
 import { execute as messageCreateHandler } from './events/messageCreate.js';
+import { handleButtonInteraction } from './events/ButtonReact.js';
 import express from 'express';
 
 dotenv.config();
@@ -75,15 +76,21 @@ for (const folder of commandFolders) {
 client.on(Events.MessageCreate, messageCreateHandler);
 
 client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isChatInputCommand()) return;
+    if (!interaction.isChatInputCommand() && !interaction.isButton()) return;
     const command = interaction.client.commands.get(interaction.commandName);
-    if (!command) {
+    if (!command && !interaction.isButton()) {
         logger.error(`No command matching ${interaction.commandName} found.`);
         return;
     }
+    if (interaction.isButton()){
+        await handleButtonInteraction(interaction);
+        console.log(`Button interaction handled: ${interaction.customId}`);
+    }
 
-    // Check if the command is allowed in the current channel
-    if (!['warn', 'warnings'].includes(interaction.commandName) && interaction.channelId !== process.env.ALLOWED_CHANNEL_ID) {
+    const COMMAND_WHITELIST = ['warn', 'warnings'];
+    const ALLOWED_CHANNEL_ID = process.env.ALLOWED_CHANNEL_ID;
+
+    if (ALLOWED_CHANNEL_ID && !COMMAND_WHITELIST.includes(interaction.commandName) && interaction.channelId !== process.env.ALLOWED_CHANNEL_ID) {
         await interaction.reply({
             content: `❌ This command can only be used in the designated channel! Please go to <#${process.env.ALLOWED_CHANNEL_ID}> to execute the command.`,
             flags: 64,
@@ -148,7 +155,7 @@ async function deleteChannel(channelId) {
 client.once(Events.ClientReady, c => {
     logger.info(`✅ Ready! Signed in as ${c.user.tag}`);
     client.user.setPresence({ status: 'dnd' });
-    client.user.setActivity('音度空間', { type: ActivityType.Listening });
+    client.user.setActivity('音之幻想', { type: ActivityType.Listening });
     scheduleDeletions();
     schedule.scheduleJob('0 0 * * *', () => {
         logger.info('🔄 Running daily channel deletion schedule...');
