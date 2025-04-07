@@ -204,14 +204,14 @@ export async function deleteTicket(interaction) {
     const categoryKey = parts[2] || 'others';
     const categoryName = ticketCategoryMap[categoryKey] || '未分類';
 
-    const fileName = `${startDate} - ${endDate} ticket - ${username} - ${categoryName}.json`;
+    const fileName = `${startDate} - ${endDate} - ticket - ${username} - ${categoryName}.json`;
     const jsonBuffer = Buffer.from(JSON.stringify(formatted, null, 2));
     const file = new AttachmentBuilder(jsonBuffer, { name: fileName });
 
     // Send the log file to the log channel
     if (logChannel && logChannel.isTextBased()) {
       await logChannel.send({
-        content: `🗂️ Ticket 紀錄：\`${startDate} - ${endDate} ticket - ${username} - ${categoryName}\``,
+        content: `🗂️ Ticket 紀錄：\`${startDate} - ${endDate} - ticket - ${username} - ${categoryName}\``,
         files: [file],
       });
       logSent = true;
