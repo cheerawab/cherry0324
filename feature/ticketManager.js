@@ -3,7 +3,8 @@ import {
   PermissionsBitField,
   ActionRowBuilder,
   ButtonBuilder,
-  ButtonStyle
+  ButtonStyle,
+  AttachmentBuilder
 } from 'discord.js';
 
 const ticketCategoryMap = {
@@ -84,7 +85,7 @@ export async function closeTicket(interaction) {
   const openerId = interaction.user.id;
   const supportRoleId = process.env.SUPPORT_ROLE_ID;
 
-  // 設定權限覆蓋：禁止發言，但允許查看
+  // Set permission overwrites: deny sending messages but allow viewing
   await channel.permissionOverwrites.edit(openerId, {
     SendMessages: false,
     ViewChannel: true
@@ -170,7 +171,95 @@ export async function reopenTicket(interaction) {
  * @param {Object} interaction - The interaction object from Discord.
  */
 export async function deleteTicket(interaction) {
-  await interaction.followUp({ content: '🗑️ Ticket 已刪除。', flags: 64 });
+  const channel = interaction.channel;
+  const logChannelId = process.env.TICKET_LOG_CHANNEL_ID;
+  const logChannel = interaction.client.channels.cache.get(logChannelId);
+  let logSent = false;
 
-  await interaction.channel.delete().catch(console.error);
+  try {
+    // Get all messages in the channel
+    const messages = await fetchAllMessages(channel);
+
+    const formatted = messages.map(msg => ({
+      id: msg.id,
+      author: {
+        id: msg.author.id,
+        username: msg.author.username,
+        tag: msg.author.tag,
+      },
+      content: msg.content,
+      timestamp: msg.createdAt,
+      attachments: msg.attachments.map(a => a.url),
+    }));
+
+    // Format the date for the filename
+    const now = new Date();
+    const created = channel.createdAt || now;
+
+    const startDate = formatDate(created);
+    const endDate = formatDate(now);
+
+    const parts = channel.name.split('-');
+    const username = parts[1] || 'unknown';
+    const categoryKey = parts[2] || 'others';
+    const categoryName = ticketCategoryMap[categoryKey] || '未分類';
+
+    const fileName = `${startDate} - ${endDate} ticket - ${username} - ${categoryName}.json`;
+    const jsonBuffer = Buffer.from(JSON.stringify(formatted, null, 2));
+    const file = new AttachmentBuilder(jsonBuffer, { name: fileName });
+
+    // Send the log file to the log channel
+    if (logChannel && logChannel.isTextBased()) {
+      await logChannel.send({
+        content: `🗂️ Ticket 紀錄：\`${startDate} - ${endDate} ticket - ${username} - ${categoryName}\``,
+        files: [file],
+      });
+      logSent = true;
+    }
+  } catch (err) {
+    console.error('❌ 發送 ticket 紀錄時發生錯誤：', err);
+  }
+
+  // Send a follow-up message to the user
+  await interaction.followUp({
+    content: logSent
+      ? '📁 Ticket 紀錄已備份並發送，頻道即將刪除。'
+      : '⚠️ 無法發送紀錄，但仍會刪除 Ticket。',
+    flags: 64
+  });
+
+  // Delete the ticket channel
+  await channel.delete().catch(console.error);
+}
+
+/**
+ * Format the date as mm-dd.
+ *
+ * @param {Date} date - The date to format.
+ * @returns {string} The formatted date.
+ */
+function formatDate(date) {
+  return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+/**
+ * Fetch all messages in a channel (recursive pagination).
+ *
+ * @param {Object} channel - The Discord channel object.
+ * @returns {Array} An array of messages.
+ */
+async function fetchAllMessages(channel) {
+  let messages = [];
+  let lastId;
+
+  while (true) {
+    const fetched = await channel.messages.fetch({ limit: 100, before: lastId });
+    if (fetched.size === 0) break;
+
+    messages.push(...fetched.values());
+    lastId = fetched.last().id;
+  }
+
+  messages.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
+  return messages;
 }
