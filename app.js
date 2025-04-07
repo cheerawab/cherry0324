@@ -77,22 +77,25 @@ client.on(Events.MessageCreate, messageCreateHandler);
 
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand() && !interaction.isButton()) return;
-    const command = interaction.client.commands.get(interaction.commandName);
-    if (!command && !interaction.isButton()) {
-        logger.error(`No command matching ${interaction.commandName} found.`);
-        return;
-    }
-    if (interaction.isButton()){
+
+    if (interaction.isButton()) {
         await handleButtonInteraction(interaction);
         console.log(`Button interaction handled: ${interaction.customId}`);
+        return; // ✅ 防止往下執行 command 處理
+    }
+
+    const command = interaction.client.commands.get(interaction.commandName);
+    if (!command) {
+        logger.error(`No command matching ${interaction.commandName} found.`);
+        return;
     }
 
     const COMMAND_WHITELIST = ['warn', 'warnings'];
     const ALLOWED_CHANNEL_ID = process.env.ALLOWED_CHANNEL_ID;
 
-    if (ALLOWED_CHANNEL_ID && !COMMAND_WHITELIST.includes(interaction.commandName) && interaction.channelId !== process.env.ALLOWED_CHANNEL_ID) {
+    if (ALLOWED_CHANNEL_ID && !COMMAND_WHITELIST.includes(interaction.commandName) && interaction.channelId !== ALLOWED_CHANNEL_ID) {
         await interaction.reply({
-            content: `❌ This command can only be used in the designated channel! Please go to <#${process.env.ALLOWED_CHANNEL_ID}> to execute the command.`,
+            content: `❌ This command can only be used in the designated channel! Please go to <#${ALLOWED_CHANNEL_ID}> to execute the command.`,
             flags: 64,
         });
         logger.warn(`❌ Command ${interaction.commandName} was denied because it was executed in an unauthorized channel (${interaction.channelId}).`);
@@ -104,7 +107,11 @@ client.on(Events.InteractionCreate, async interaction => {
     } catch (error) {
         logger.error('Command execution error:', error);
         console.error(error);
-        await interaction.reply({ content: 'An error occurred while executing this command!', flags: 64 });
+        if (!interaction.replied && !interaction.deferred) {
+            await interaction.reply({ content: 'An error occurred while executing this command!', flags: 64 });
+        } else {
+            await interaction.followUp({ content: 'An error occurred while executing this command!', flags: 64 });
+        }
     }
 });
 

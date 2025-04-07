@@ -81,43 +81,26 @@ export async function createTicket(interaction, customId) {
 export async function closeTicket(interaction) {
   const channel = interaction.channel;
   const guild = interaction.guild;
-  const opener = channel.permissionOverwrites.cache.find(perm => perm.allow.has(PermissionsBitField.Flags.SendMessages) && perm.type === 1);
+  const openerId = interaction.user.id;
   const supportRoleId = process.env.SUPPORT_ROLE_ID;
 
-  const overwrites = [];
-
-  // Update permissions for the ticket opener
-  if (opener) {
-    overwrites.push({
-      id: opener.id,
-      deny: [PermissionsBitField.Flags.SendMessages],
-      allow: [PermissionsBitField.Flags.ViewChannel]
-    });
-  }
-
-  // Update permissions for the support role
-  if (supportRoleId) {
-    overwrites.push({
-      id: supportRoleId,
-      deny: [PermissionsBitField.Flags.SendMessages],
-      allow: [PermissionsBitField.Flags.ViewChannel]
-    });
-  }
-
-  // Restrict everyone from viewing the channel
-  await channel.permissionOverwrites.edit(guild.roles.everyone, {
-    ViewChannel: false
+  // 設定權限覆蓋：禁止發言，但允許查看
+  await channel.permissionOverwrites.edit(openerId, {
+    SendMessages: false,
+    ViewChannel: true
   });
 
-  // Apply updated permissions
-  for (const overwrite of overwrites) {
-    await channel.permissionOverwrites.edit(overwrite.id, {
-      SendMessages: overwrite.deny.includes(PermissionsBitField.Flags.SendMessages) ? 0 : null,
+  if (supportRoleId) {
+    await channel.permissionOverwrites.edit(supportRoleId, {
+      SendMessages: false,
       ViewChannel: true
     });
   }
 
-  // Add reopen and delete buttons
+  await channel.permissionOverwrites.edit(guild.roles.everyone, {
+    ViewChannel: false
+  });
+
   const controlRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId('ticket_reopen')
