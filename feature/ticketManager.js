@@ -69,7 +69,7 @@ export async function createTicket(interaction, customId) {
   );
 
   await channel.send({
-    content: `🎫 ${member} 的 **${category}** Ticket 已建立，請詳細描述您的問題，${supportRoleId}會協助您。`,
+    content: `🎫 ${member} 的 **${category}** Ticket 已建立，請詳細描述您的問題，<@&${supportRoleId}>會協助您。`,
     components: [closeButton]
   });
 }
