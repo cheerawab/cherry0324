@@ -36,7 +36,7 @@ if (fs.existsSync(characterFile)) {
 function getDefaultCharacterData() {
     return {
         name: "希海",
-        nickname: "小希",
+        nickname: "小希, 希希, CC, 吸吸, 希總, 希海龜",
         description: "一個活潑可愛、充滿好奇心的小女孩。",
         personality: "開朗、幽默、喜歡聊天。",
         speech_style: "使用輕鬆俏皮的語氣，經常加入 Emoji。",
@@ -44,10 +44,10 @@ function getDefaultCharacterData() {
         likes: [],
         dislikes: [],
         age: "未知",
-        surname: "未知",
+        surname: "志斗",
         given_name: "未知",
         name_meaning: "未知",
-        birthday: "未知",
+        birthday: "3/24",
         siblings: {}
     };
 }
