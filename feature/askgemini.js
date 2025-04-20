@@ -133,7 +133,7 @@ export async function askGeminiAI(threadId, userId, userName, question) {
 
         logger.info(`📨 送出的 Prompt: ${prompt}`);
         
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
         const result = await model.generateContent(prompt);
         const reply = result.response.text().trim();
         
