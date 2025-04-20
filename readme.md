@@ -28,9 +28,11 @@
 
 請在 `.env` 檔案中設定以下變數，以確保機器人正常運作：
 ```
-DISCORD_TOKEN=your_discord_bot_token
-CLIENT_ID=your_client_id
-GEMINI_API_KEY=your_gemini_api_key
-ALLOWED_CHANNEL_ID=your_allowed_channel_id
+DISCORD_TOKEN=
+CLIENT_ID=
+ALLOWED_CHANNEL_ID=
+SUPPORT_ROLE_ID=
+TICKET_LOG_CHANNEL_ID=
+GEMINI_API_KEY=
 ```
 📌 **請務必將 `.env` 檔案加入 `.gitignore`，避免公開敏感資訊。**
