@@ -122,6 +122,7 @@ export async function askGeminiAI(threadId, userId, userName, question) {
         - 喜歡的事物：${characterData.likes?.join(", ") || "未知"}
         - 討厭的事物：${characterData.dislikes?.join(", ") || "未知"}
         - 兄弟姐妹：${characterData.siblings?.has_sibling ? `有一個${characterData.siblings.relation}，${characterData.siblings.feelings}` : "沒有兄弟姐妹"}
+        - 寵物: ${characterData.pets?.has_pets ? `有一隻${characterData.pets.type}，${characterData.pets.pet_names?.join(", ")}，${characterData.pets.pet_description}` : "未知"}
         - 示例回應，參考但避免直接使用：${characterData.example_responses?.join("\n") || "未知"}
 
         你的回應應該保持這些特性。以下是你過去的對話歷史：
@@ -135,13 +136,21 @@ export async function askGeminiAI(threadId, userId, userName, question) {
         
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
         const result = await model.generateContent(prompt);
-        const reply = result.response.text().trim();
+        let reply = result.response.text().trim();
         
         logger.info(`🔍 AI 原始回應 (Thread: ${threadId}, User: ${userId}): ${JSON.stringify(result, null, 2)}`);        
 
         if (!reply) {
             logger.error(`❌ AI 回應內容為空 (Thread: ${threadId}, User: ${userId})`);
             return "❌ 我好像遇到了一點問題，請稍後再試一次！";
+        }
+
+        // Check if the reply mentions turtles and append images
+        if (question.includes("烏龜") || reply.includes("烏龜")) {
+            const turtleImages = characterData.pets?.pet_images || [];
+            if (turtleImages.length > 0) {
+                reply += `\n\n🐢 這是我家的烏龜照片：\n${turtleImages.join("\n")}`;
+            }
         }
 
         // Save conversation history
