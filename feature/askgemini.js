@@ -126,7 +126,7 @@ export async function askGeminiAI(threadId, userId, userName, question) {
 
         logger.info(`📨 送出的 Prompt: ${prompt}`);
         
-        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
         const response = await model.generateContent(prompt);
         
         logger.info(`🔍 AI 原始回應 (Thread: ${threadId}, User: ${userId}): ${JSON.stringify(response, null, 2)}`);
