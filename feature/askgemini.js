@@ -7,7 +7,14 @@ import Logger from '../feature/errorhandle/logger.js';
 dotenv.config();
 
 const logger = new Logger();
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Check if the environment variable is set
+const apiKey = process.env.GEMINI_API_KEY;
+
+if (!apiKey) {
+    throw new Error("❌ GEMINI_API_KEY is missing in environment variables.");
+}
+
+const genAI = new GoogleGenerativeAI(apiKey);
 
 // Load character settings
 const characterFile = path.resolve('./feature/character/xihai.json');
@@ -127,12 +134,11 @@ export async function askGeminiAI(threadId, userId, userName, question) {
         logger.info(`📨 送出的 Prompt: ${prompt}`);
         
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
-        const response = await model.generateContent(prompt);
+        const result = await model.generateContent(prompt);
+        const reply = result.response.text().trim();
         
-        logger.info(`🔍 AI 原始回應 (Thread: ${threadId}, User: ${userId}): ${JSON.stringify(response, null, 2)}`);
-        
-        const reply = response?.response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-        
+        logger.info(`🔍 AI 原始回應 (Thread: ${threadId}, User: ${userId}): ${JSON.stringify(result, null, 2)}`);        
+
         if (!reply) {
             logger.error(`❌ AI 回應內容為空 (Thread: ${threadId}, User: ${userId})`);
             return "❌ 我好像遇到了一點問題，請稍後再試一次！";
