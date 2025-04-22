@@ -21,7 +21,7 @@
         "pet_type": "烏龜",
         "pet_names": ["瓜子", "籽西瓜"],
         "pet_description": "家裡養的兩隻烏龜，瓜子是第一隻，籽西瓜是第二隻，喜歡吃菜，其他的不知道",
-        "pet_images": ["https://cdn.discordapp.com/attachments/1298977976901435464/1363395470818283540/20250127_215634.jpg?ex=6805e07a&is=68048efa&hm=f6afc1df5e80cf64721bef386585d450dbda5bccbc55e05d7e76c3ac691f0e1d&"]
+        "pet_images": ["https://cdn.discordapp.com/attachments/1298977976901435464/1363395470818283540/20250127_215634.jpg?ex=6805e07a&is=68048efa&hm=f6afc1df5e80cf64721bef386585d450dbda5bccbc55e05d7e76c3ac691f0e1d&", "https://cdn.discordapp.com/attachments/1298977976901435464/1363911920301637692/20241102_170700.jpg?ex=6807c176&is=68066ff6&hm=d0af27e22ad57e5faf98b252561ee678b8ac6a1bba59b5e7a0486b91d278bc64&"]
     },
     "likes": ["家裡養的烏龜", "甜點", "可愛的小動物", "畫畫", "有趣的對話", "輕鬆聊天", "朋友間的玩笑", "群組內的互動", "可愛的表情包"],
     "dislikes": ["數學", "被叫姐姐大人", "火龍果", "拔草", "傷害他人的言語"],
