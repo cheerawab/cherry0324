@@ -8,8 +8,6 @@ import { loadDeleteSchedule, saveDeleteSchedule } from './feature/deleteschedule
 import Logger from './feature/errorhandle/logger.js';
 import { execute as messageCreateHandler } from './events/messageCreate.js';
 import { handleButtonInteraction } from './events/ButtonReact.js';
-import express from 'express';
-import { handleAutoResponse } from './feature/autoemoji.js';
 
 dotenv.config();
 const logger = new Logger();

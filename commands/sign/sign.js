@@ -95,7 +95,7 @@ export const execute = async (interaction) => {
         const userRecord = signInData[userId];
         
         if (userRecord.lastSignIn === today) {
-            return await interaction.editReply(`✅ You have already signed in today, ${userName}!`);
+            return await interaction.editReply(`✅ 你今天簽到過了明天再來吧, ${userName}!`);
         }
 
         if (userRecord.lastSignIn) {
@@ -122,15 +122,15 @@ export const execute = async (interaction) => {
             const imagePath = path.join(imagesDir, randomImage);
             logger.info(`Sending image: ${imagePath}`);
             await interaction.editReply({
-                content: `🎉 ${userName}, you have signed in! Streak: ${userRecord.streak} days. Total: ${userRecord.total} times.`,
+                content: `🎉 ${userName}, 你簽到了! 連續: ${userRecord.streak} 天真厲害. 總共: ${userRecord.total} 天.`,
                 files: [imagePath]
             });
         } else {
             logger.warn(`No image available for ${userName}`);
-            await interaction.editReply(`🎉 ${userName}, you have signed in! Streak: ${userRecord.streak} days. Total: ${userRecord.total} times.`);
+            await interaction.editReply(`🎉 ${userName}, 你簽到了! 連續: ${userRecord.streak} 天真厲害. 總共: ${userRecord.total} 天.`);
         }
     } catch (error) {
         logger.error(`❌ Error processing sign-in: ${error.message}`);
-        await interaction.editReply('❌ An error occurred while signing in. Please try again later.');
+        await interaction.editReply('❌ 哎呀,出了點問題誒');
     }
 };
