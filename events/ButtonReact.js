@@ -24,7 +24,7 @@ export async function handleButtonInteraction(interaction) {
             console.log(`Processing ticket creation for category: ${action}`);
             await createTicket(interaction, action);
             console.log(`Successfully created ticket for category: ${action}`);
-            await interaction.followUp({ content: `✅ Ticket channel has been created, please check!`, flags: 64 });
+            await interaction.followUp({ content: `✅ 客服單已開啟!`, flags: 64 });
         } 
         // Handle ticket closure
         else if (action === 'close') {

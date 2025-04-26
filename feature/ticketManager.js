@@ -6,6 +6,7 @@ import {
   ButtonStyle,
   AttachmentBuilder
 } from 'discord.js';
+import { createTranscript } from 'discord-html-transcripts';
 
 const ticketCategoryMap = {
   report: '舉報違規',
@@ -177,42 +178,33 @@ export async function deleteTicket(interaction) {
   let logSent = false;
 
   try {
-    // Get all messages in the channel
-    const messages = await fetchAllMessages(channel);
+    // 使用 discord-html-transcripts 生成聊天記錄
+    const transcript = await createTranscript(channel, {
+      limit: -1,
+      returnBuffer: true,
+      fileName: `${channel.name}-transcript.html`,
+      saveImages: true, // 保存圖片
+    });
 
-    const formatted = messages.map(msg => ({
-      id: msg.id,
-      author: {
-        id: msg.author.id,
-        username: msg.author.username,
-        tag: msg.author.tag,
-      },
-      content: msg.content,
-      timestamp: msg.createdAt,
-      attachments: msg.attachments.map(a => a.url),
-    }));
+    // 模擬 JSON 資料
+    const ticketData = {
+      ticketName: channel.name,
+      createdBy: interaction.user.tag,
+      createdAt: channel.createdAt,
+      category: 'Example Category',
+    };
 
-    // Format the date for the filename
-    const now = new Date();
-    const created = channel.createdAt || now;
+    // 將 JSON 資料轉為 Buffer
+    const jsonBuffer = Buffer.from(JSON.stringify(ticketData, null, 2), 'utf-8');
 
-    const startDate = formatDate(created);
-    const endDate = formatDate(now);
-
-    const parts = channel.name.split('-');
-    const username = parts[1] || 'unknown';
-    const categoryKey = parts[2] || 'others';
-    const categoryName = ticketCategoryMap[categoryKey] || '未分類';
-
-    const fileName = `${startDate} - ${endDate} - ticket - ${username} - ${categoryName}.json`;
-    const jsonBuffer = Buffer.from(JSON.stringify(formatted, null, 2));
-    const file = new AttachmentBuilder(jsonBuffer, { name: fileName });
-
-    // Send the log file to the log channel
+    // 將聊天記錄和 JSON 資料發送到日誌頻道
     if (logChannel && logChannel.isTextBased()) {
       await logChannel.send({
-        content: `🗂️ Ticket 紀錄：\`${startDate} - ${endDate} - ticket - ${username} - ${categoryName}\``,
-        files: [file],
+        content: `🗂️ Ticket 紀錄：\`${channel.name}\``,
+        files: [
+          transcript, // 聊天記錄
+          { attachment: jsonBuffer, name: `${channel.name}-data.json` }, // JSON 資料
+        ],
       });
       logSent = true;
     }
@@ -220,46 +212,14 @@ export async function deleteTicket(interaction) {
     console.error('❌ 發送 ticket 紀錄時發生錯誤：', err);
   }
 
-  // Send a follow-up message to the user
+  // 發送回覆給用戶
   await interaction.followUp({
     content: logSent
       ? '📁 Ticket 紀錄已備份並發送，頻道即將刪除。'
       : '⚠️ 無法發送紀錄，但仍會刪除 Ticket。',
-    flags: 64
+    flags: 64,
   });
 
-  // Delete the ticket channel
+  // 刪除 Ticket 頻道
   await channel.delete().catch(console.error);
-}
-
-/**
- * Format the date as mm-dd.
- *
- * @param {Date} date - The date to format.
- * @returns {string} The formatted date.
- */
-function formatDate(date) {
-  return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-}
-
-/**
- * Fetch all messages in a channel (recursive pagination).
- *
- * @param {Object} channel - The Discord channel object.
- * @returns {Array} An array of messages.
- */
-async function fetchAllMessages(channel) {
-  let messages = [];
-  let lastId;
-
-  while (true) {
-    const fetched = await channel.messages.fetch({ limit: 100, before: lastId });
-    if (fetched.size === 0) break;
-
-    messages.push(...fetched.values());
-    lastId = fetched.last().id;
-  }
-
-  messages.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
-  return messages;
 }
