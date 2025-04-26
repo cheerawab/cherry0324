@@ -1,7 +1,8 @@
 import { Events } from 'discord.js';
 import { isAutoBanEnabled } from '../feature/autoban.js';
 import { askGeminiAI } from '../feature/askgemini.js';
-import { handleAutoResponse } from '../feature/autoresponses/autoresponses.js';
+import { handleAutoResponse as handleKeywordResponse } from '../feature/autoresponses/autoresponses.js';
+import { handleAutoResponse as handleAutoEmojiResponse } from '../feature/autoemoji.js';
 import fs from 'fs';
 import path from 'path';
 import Logger from '../feature/errorhandle/logger.js';
@@ -86,7 +87,10 @@ export const execute = async (message) => {
         logger.error(`❌ Error processing AutoBan: ${error.message}`);
     }
 
-    // **Auto-response handling**
-    const responded = await handleAutoResponse(message);
-    if (responded) return; // Stop execution if a response was already sent
+    // Auto-response handling
+    const emojiResponded = await handleAutoEmojiResponse(message); // 處理表情符號回應
+    if (emojiResponded) return;
+
+    const keywordResponded = await handleKeywordResponse(message); // 處理關鍵字回應
+    if (keywordResponded) return;
 };

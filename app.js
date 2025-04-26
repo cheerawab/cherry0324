@@ -9,20 +9,10 @@ import Logger from './feature/errorhandle/logger.js';
 import { execute as messageCreateHandler } from './events/messageCreate.js';
 import { handleButtonInteraction } from './events/ButtonReact.js';
 import express from 'express';
+import { handleAutoResponse } from './feature/autoemoji.js';
 
 dotenv.config();
 const logger = new Logger();
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
-
-app.listen(PORT, () => {
-    logger.info(`Express server running on port ${PORT}`);
-});
 
 /**
  * Initializes the Discord client with necessary intents and partials.
