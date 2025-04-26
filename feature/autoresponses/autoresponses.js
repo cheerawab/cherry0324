@@ -28,13 +28,13 @@ loadResponses();
 export async function handleAutoResponse(message) {
     const content = message.content.trim().toLowerCase();
 
-    for (const keyword in keywordResponses) {
-        if (content.includes(keyword)) {
-            const responses = keywordResponses[keyword]; // Get the response array
+    for (const key in keywordResponses) {
+        const { keywords, responses } = keywordResponses[key];
+        if (keywords.some(keyword => content.includes(keyword))) {
             if (Array.isArray(responses) && responses.length > 0) {
                 const randomResponse = responses[Math.floor(Math.random() * responses.length)]; // Select a random response
                 await message.reply(randomResponse);
-                console.log(`💬 Auto-replied: "${keyword}" → "${randomResponse}"`);
+                console.log(`💬 Auto-replied: "${keywords}" → "${randomResponse}"`);
                 return true; // Indicates that a response was sent
             }
         }
