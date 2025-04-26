@@ -29,12 +29,3 @@ export async function handleAutoResponse(message) {
         return false; // 表示處理失敗
     }
 }
-
-/**
- * 偵測訊息是否來自指定頻道，並添加表情符號反應
- * @param {import('discord.js').Message} message - Discord 訊息物件
- * @returns {Promise<boolean>} - 是否成功處理訊息
- */
-export async function handleAutoEmojiResponse(message) {
-    // ...existing code...
-}
