@@ -29,18 +29,30 @@ export async function handleAutoResponse(message) {
     const content = message.content.trim().toLowerCase();
 
     for (const key in keywordResponses) {
-        const { keywords, responses } = keywordResponses[key];
-        if (keywords.some(keyword => content.includes(keyword))) {
+        const { keywords, responses, absolute } = keywordResponses[key];
+
+        // 如果 absolute 為 true，則只匹配完全相同的字詞
+        if (absolute) {
+            if (!keywords.includes(content)) continue; // 如果內容不完全匹配，跳過
+        } else {
+            // 如果 absolute 為 false，則檢查是否包含關鍵字
+            if (!keywords.some(keyword => content.includes(keyword))) continue;
+        }
+
+        // 加入隨機機率判斷（50% 機率回應）
+        if (Math.random() > 0.5) {
             if (Array.isArray(responses) && responses.length > 0) {
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)]; // Select a random response
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)]; // 隨機選擇回應
                 await message.reply(randomResponse);
                 console.log(`💬 Auto-replied: "${keywords}" → "${randomResponse}"`);
-                return true; // Indicates that a response was sent
+                return true; // 表示已發送回應
             }
+        } else {
+            console.log(`🤔 Skipped auto-reply for: "${keywords}" (50% chance)`);
         }
     }
 
-    return false; // No matching keyword found
+    return false; // 沒有匹配的關鍵字
 }
 
 /**
