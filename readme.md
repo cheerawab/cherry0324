@@ -28,12 +28,16 @@
 
 請在 `.env` 檔案中設定以下變數，以確保機器人正常運作：
 ```
+### 必填
 DISCORD_TOKEN=
 CLIENT_ID=
-ALLOWED_CHANNEL_ID=
 SUPPORT_ROLE_ID=
 TICKET_LOG_CHANNEL_ID=
 GEMINI_API_KEY=
 SELFINTRODUCTIONCHANNEL=
+### 可選填(預設都需要填,可在events\interaction\allowed.json 中更改)
+SELFINTRODUCTION_CHANNEL_ID=
+AICHAT_CHANNEL_ID=
+SIGN_CHANNEL_ID=
 ```
 📌 **請務必將 `.env` 檔案加入 `.gitignore`，避免公開敏感資訊。**

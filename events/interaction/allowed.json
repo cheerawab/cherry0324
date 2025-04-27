@@ -1,0 +1,20 @@
+{
+    "AICHAT": {
+        "env": "AICHAT_CHANNEL_ID",
+        "whitelist": false
+    },
+    "SELFINTRODUCTION": {
+        "env": "SELFINTRODUCTION_CHANNEL_ID",
+        "whitelist": false
+    },
+    "SIGN": {
+        "env": "SIGN_CHANNEL_ID",
+        "whitelist": false
+    },
+    "warn": {
+        "whitelist": true
+    },
+    "warnings": {
+        "whitelist": true
+    }
+}
