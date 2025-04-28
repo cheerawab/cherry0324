@@ -3,7 +3,7 @@
         "env": "AICHAT_CHANNEL_ID",
         "whitelist": false
     },
-    "SIGN": {
+    "sign": {
         "env": "SIGN_CHANNEL_ID",
         "whitelist": false
     },
