@@ -1,10 +1,6 @@
 {
-    "AICHAT": {
+    "和希海說話": {
         "env": "AICHAT_CHANNEL_ID",
-        "whitelist": false
-    },
-    "SELFINTRODUCTION": {
-        "env": "SELFINTRODUCTION_CHANNEL_ID",
         "whitelist": false
     },
     "SIGN": {
