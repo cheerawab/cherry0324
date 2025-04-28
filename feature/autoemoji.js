@@ -10,7 +10,7 @@ console.log(`🔍 SELFINTRODUCTIONCHANNEL: ${process.env.SELFINTRODUCTIONCHANNEL
  */
 export async function handleAutoResponse(message) {
     // 從 .env 中取得 SELFINTRODUCTIONCHANNEL 的頻道 ID
-    const selfIntroductionChannelId = process.env.SELFINTRODUCTIONCHANNEL?.trim();
+    const selfIntroductionChannelId = process.env.SELFINTRODUCTION_CHANNEL_ID?.trim();
 
     // 檢查訊息是否來自指定頻道
     console.log(`🔍 Check channel ID: Message channel ID = ${message.channel.id}, Specify channel ID = ${selfIntroductionChannelId}`);
