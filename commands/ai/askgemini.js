@@ -1,7 +1,8 @@
+import Logger from '../../feature/errorhandle/logger.js';
+import { askGeminiAI } from '../../feature/askgemini/askgemini.js';
 import { SlashCommandBuilder, ChannelType } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
-import Logger from '../../feature/errorhandle/logger.js';
 
 const logger = new Logger();
 const aiThreadsFile = path.resolve('/app/data/aiThreads.json');

@@ -1,6 +1,6 @@
 import { Events } from 'discord.js';
 import { isAutoBanEnabled } from '../feature/autoban.js';
-import { askGeminiAI } from '../feature/askgemini.js';
+import { askGeminiAI } from '../feature/askgemini/askgemini.js';
 import { handleAutoResponse as handleKeywordResponse } from '../feature/autoresponses/autoresponses.js';
 import { handleAutoResponse as handleAutoEmojiResponse } from '../feature/autoemoji.js';
 import fs from 'fs';
@@ -56,7 +56,7 @@ export const execute = async (message) => {
                 try {
                     logger.info(`📩 Received AI conversation message (Thread: ${threadId}, User: ${userName}): ${question}`);
                     const thinkingMessage = await message.channel.send(`🤔 Thinking...`);
-                    const reply = await askGeminiAI(threadId, userId, userName, question);
+                    const reply = await askGeminiAI(threadId, userId, userName, question, message);
                     await thinkingMessage.edit(reply);
                 } catch (error) {
                     logger.error(`❌ AI API response error (Thread: ${threadId}): ${error.message}`);

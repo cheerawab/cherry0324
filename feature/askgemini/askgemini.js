@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
-import Logger from '../feature/errorhandle/logger.js';
+import Logger from '../errorhandle/logger.js';
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ if (!apiKey) {
 const genAI = new GoogleGenerativeAI(apiKey);
 
 // Load character settings
-const characterFile = path.resolve('./feature/character/xihai.json');
+const characterFile = path.resolve('./feature/character/xihai/xihai.json');
 let characterData = {};
 
 if (fs.existsSync(characterFile)) {
@@ -96,7 +96,7 @@ function saveMemory(threadId, conversationHistory) {
  * @param {string} question - User's question
  * @returns {Promise<string>} - AI response
  */
-export async function askGeminiAI(threadId, userId, userName, question) {
+export async function askGeminiAI(threadId, userId, userName, question, message) {
     if (!question || typeof question !== 'string') {
         logger.warn(`⚠️ Invalid question (Thread: ${threadId}, User: ${userId}, Name: ${userName}), skipping processing.`);
         return "❌ 我好像沒聽清楚你的問題，可以再說一次嗎？";
@@ -145,11 +145,54 @@ export async function askGeminiAI(threadId, userId, userName, question) {
             return "❌ 我好像遇到了一點問題，請稍後再試一次！";
         }
 
-        // Check if the reply mentions turtles and append images
-        if (question.includes("烏龜") || reply.includes("烏龜")) {
-            const turtleImages = characterData.pets?.pet_images || [];
-            if (turtleImages.length > 0) {
-                reply += `\n\n🐢 這是我家的烏龜照片：\n${turtleImages.join("\n")}`;
+        // Check if the reply mentions pets based on pet_type and append images
+        const petType = characterData.pets?.pet_type?.split(',').map(type => type.trim()) || [];
+        const petImages = characterData.pets?.pet_images || [];
+
+        if (petType.some(type => question.includes(type) || reply.includes(type))) {
+            const petKeyword = petType[1]?.trim(); // 取出 `,` 後的名稱
+            const petFolderPath = path.join('./feature/character/xihai', petImages[0]); // 使用相對路徑
+
+            logger.info(`📂 檢查目錄：${petFolderPath}`);
+            logger.info(`🔑 檢查關鍵字：${petKeyword}`);
+
+            // 確保目錄存在，並篩選符合條件的檔案
+            let matchedImages = [];
+            if (fs.existsSync(petFolderPath) && fs.lstatSync(petFolderPath).isDirectory()) {
+                matchedImages = fs.readdirSync(petFolderPath)
+                    .filter(file => file.toLowerCase().startsWith(petKeyword.toLowerCase())) // 檢測檔名是否以 petKeyword 開頭（忽略大小寫）
+                    .map(file => path.join(petFolderPath, file)); // 生成完整路徑
+            } else {
+                logger.warn(`⚠️ 目錄不存在或不是目錄：${petFolderPath}`);
+            }
+
+            if (!message || !message.channel) {
+                logger.error("❌ 無法發送圖片，因為 message 或 message.channel 未定義。");
+                return "❌ 我好像遇到了一點問題，請稍後再試一次！";
+            }
+
+            logger.info(`🔍 傳遞的 message 物件：${JSON.stringify(message, null, 2)}`);
+
+            if (matchedImages.length > 0) {
+                reply += `\n\n🐾 這是我家的${petType[0]}照片：`;
+                const attachments = matchedImages.map(image => ({
+                    attachment: image,
+                    name: path.basename(image),
+                }));
+
+                try {
+                    // 發送圖片作為附件
+                    await message.channel.send({
+                        content: reply,
+                        files: attachments,
+                    });
+                    return; // 確保不重複發送回應
+                } catch (error) {
+                    logger.error(`❌ 發送圖片時發生錯誤：${error.message}`);
+                }
+            } else {
+                reply += `\n\n🐾 抱歉，我找不到符合條件的${petType[0]}照片，可能牠們躲起來了！🤣`;
+                logger.warn(`⚠️ 未找到符合條件的圖片，檢查 pet_images 或檔案名稱是否正確。`);
             }
         }
 
