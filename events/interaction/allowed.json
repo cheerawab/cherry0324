@@ -12,5 +12,32 @@
     },
     "warnings": {
         "whitelist": true
+    },
+    "emoji": {
+        "whitelist": true
+    },
+    "clearwarnings": {
+        "whitelist": true
+    },
+    "tickets": {
+        "whitelist": true
+    },
+    "cancelschedule": {
+        "whitelist": true
+    },
+    "deletechannel": {
+        "whitelist": true
+    },
+    "showdeletechannel": {
+        "whitelist": true
+    },
+    "ping": {
+        "whitelist": true
+    },
+    "cancelautoban": {
+        "whitelist": true
+    },
+    "setautoban": {
+        "whitelist": true
     }
 }
