@@ -34,24 +34,30 @@ export async function handleAutoResponse(message) {
         // 檢查 absolute 是否完全匹配
         if (Array.isArray(absolute) && absolute.length > 0) {
             if (absolute.includes(content)) {
-                // 如果完全匹配 absolute，隨機回應
-                if (Array.isArray(responses) && responses.length > 0) {
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    await message.reply(randomResponse);
-                    console.log(`💬 Auto-replied (absolute match): "${content}" → "${randomResponse}"`);
-                    return true; // 表示已發送回應
+                // 加入機率判斷
+                if (Math.random() > 0.5) {
+                    // 如果完全匹配 absolute，隨機回應
+                    if (Array.isArray(responses) && responses.length > 0) {
+                        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                        await message.reply(randomResponse);
+                        console.log(`💬 Auto-replied (absolute match): "${content}" → "${randomResponse}"`);
+                        return true; // 表示已發送回應
+                    }
                 }
             }
         }
 
         // 如果沒有完全匹配 absolute，檢查是否包含 keywords
         if (Array.isArray(keywords) && keywords.some(keyword => content.includes(keyword))) {
-            // 隨機回應
-            if (Array.isArray(responses) && responses.length > 0) {
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                await message.reply(randomResponse);
-                console.log(`💬 Auto-replied (keyword match): "${content}" → "${randomResponse}"`);
-                return true; // 表示已發送回應
+            // 加入機率判斷
+            if (Math.random() > 0.5) {
+                // 隨機回應
+                if (Array.isArray(responses) && responses.length > 0) {
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    await message.reply(randomResponse);
+                    console.log(`💬 Auto-replied (keyword match): "${content}" → "${randomResponse}"`);
+                    return true; // 表示已發送回應
+                }
             }
         }
     }
