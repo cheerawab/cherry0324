@@ -19,7 +19,7 @@
     "clearwarnings": {
         "whitelist": true
     },
-    "tickets": {
+    "ticket": {
         "whitelist": true
     },
     "cancelschedule": {
