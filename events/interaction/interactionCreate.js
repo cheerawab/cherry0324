@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import Logger from '../../feature/errorhandle/logger.js';
+import { handleButtonInteraction } from '../ButtonReact.js';
 
 const logger = new Logger();
 const allowedFilePath = path.resolve('./events/interaction/allowed.json');
@@ -14,6 +15,12 @@ export const name = 'interactionCreate';
  * @param {import('discord.js').Interaction} interaction - The interaction object.
  */
 export const execute = async (interaction) => {
+    if (interaction.isButton()) {
+        // Delegate button interactions to the ButtonReact handler
+        await handleButtonInteraction(interaction);
+        return;
+    }
+
     if (!interaction.isChatInputCommand()) return;
 
     const commandName = interaction.commandName;
