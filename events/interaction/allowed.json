@@ -37,9 +37,6 @@
     "cancelautoban": {
         "whitelist": true
     },
-    "setautoban": {
-        "whitelist": true
-    },
     "autoban": {
         "whitelist": true
     }
