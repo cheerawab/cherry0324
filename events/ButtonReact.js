@@ -20,7 +20,7 @@ export async function handleButtonInteraction(interaction) {
 
     try {
         // Handle ticket creation for different categories
-        if (['report', 'coop', 'job', 'rewards', 'others'].includes(action)) {
+        if (['report', 'coop', 'apply', 'rewards', 'others'].includes(action)) {
             console.log(`Processing ticket creation for category: ${action}`);
             await createTicket(interaction, action);
             console.log(`Successfully created ticket for category: ${action}`);
