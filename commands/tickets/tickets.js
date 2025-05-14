@@ -1,8 +1,8 @@
 import { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } from 'discord.js';
 
 export const data = new SlashCommandBuilder()
-  .setName('ticket')
-  .setDescription('Create a ticket panel')
+  .setName('新增客服單面板')
+  .setDescription('開啟一個新的客服單面板在當前頻道')
   .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels);
 
 export async function execute(interaction) {

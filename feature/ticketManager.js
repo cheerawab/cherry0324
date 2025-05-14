@@ -11,7 +11,7 @@ import { createTranscript } from 'discord-html-transcripts';
 const ticketCategoryMap = {
   report: '舉報違規',
   coop: '合作申請',
-  job: '應徵職務',
+  apply: '應徵職務',
   rewards: '獎勵／兌換申請',
   others: '其他問題'
 };
