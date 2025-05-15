@@ -16,20 +16,23 @@ const ticketCategoryMap = {
   others: '其他問題'
 };
 
+// 將 SUPPORT_ROLE_ID 解析為陣列
+const supportRoleIds = process.env.SUPPORT_ROLE_ID.split(',').map(id => id.trim());
+
 /**
  * Creates a new ticket channel for the user.
  *
  * @param {Object} interaction - The interaction object from Discord.
  * @param {string} customId - The custom ID representing the ticket category.
+ * @param {string} Label - The label for the ticket button.
  */
-export async function createTicket(interaction, customId) {
+export async function createTicket(interaction, customId, Label) {
   const guild = interaction.guild;
   const member = interaction.member;
   const botId = guild.members.me.id;
-  const supportRoleId = process.env.SUPPORT_ROLE_ID;
 
   const category = ticketCategoryMap[customId] || '未分類';
-  const channelName = `ticket-${member.user.username}-${customId}`.toLowerCase();
+  const channelName = `客服單-${member.user.username}-${category}`.toLowerCase();
 
   // Check if a ticket of the same type already exists
   const existing = guild.channels.cache.find(ch => ch.name === channelName);
@@ -37,28 +40,35 @@ export async function createTicket(interaction, customId) {
     return interaction.followUp({ content: '你已經開啟了這類型的 Ticket。', flags: 64 });
   }
 
+  // 設定權限覆寫
+  const permissionOverwrites = [
+    {
+      id: guild.id,
+      deny: [PermissionsBitField.Flags.ViewChannel],
+    },
+    {
+      id: member.id,
+      allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
+    },
+    {
+      id: botId,
+      allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
+    },
+  ];
+
+  // 為每個 supportRoleId 添加權限覆寫
+  supportRoleIds.forEach(roleId => {
+    permissionOverwrites.push({
+      id: roleId,
+      allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
+    });
+  });
+
   // Create a new ticket channel
   const channel = await guild.channels.create({
     name: channelName,
     type: ChannelType.GuildText,
-    permissionOverwrites: [
-      {
-        id: guild.id,
-        deny: [PermissionsBitField.Flags.ViewChannel],
-      },
-      {
-        id: member.id,
-        allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
-      },
-      {
-        id: supportRoleId,
-        allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
-      },
-      {
-        id: botId,
-        allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
-      }
-    ]
+    permissionOverwrites,
   });
 
   // Add a close button to the ticket
@@ -70,8 +80,8 @@ export async function createTicket(interaction, customId) {
   );
 
   await channel.send({
-    content: `🎫 ${member} 的 **${category}** Ticket 已建立，請詳細描述您的問題，<@&${supportRoleId}>會協助您。`,
-    components: [closeButton]
+    content: `🎫 ${member} 的 **${category}** Ticket 已建立，請詳細描述您的問題，${supportRoleIds.map(id => `<@&${id}>`).join(' ')} 會協助您。`,
+    components: [closeButton],
   });
 }
 
@@ -84,23 +94,23 @@ export async function closeTicket(interaction) {
   const channel = interaction.channel;
   const guild = interaction.guild;
   const openerId = interaction.user.id;
-  const supportRoleId = process.env.SUPPORT_ROLE_ID;
 
   // Set permission overwrites: deny sending messages but allow viewing
   await channel.permissionOverwrites.edit(openerId, {
     SendMessages: false,
-    ViewChannel: true
+    ViewChannel: true,
   });
 
-  if (supportRoleId) {
-    await channel.permissionOverwrites.edit(supportRoleId, {
+  // 為每個 supportRoleId 設定權限覆寫
+  for (const roleId of supportRoleIds) {
+    await channel.permissionOverwrites.edit(roleId, {
       SendMessages: false,
-      ViewChannel: true
+      ViewChannel: true,
     });
   }
 
   await channel.permissionOverwrites.edit(guild.roles.everyone, {
-    ViewChannel: false
+    ViewChannel: false,
   });
 
   const controlRow = new ActionRowBuilder().addComponents(
@@ -117,7 +127,7 @@ export async function closeTicket(interaction) {
 
   await interaction.followUp({
     content: '🔒 此 Ticket 已關閉，若需重新開啟請點擊下方按鈕。',
-    components: [controlRow]
+    components: [controlRow],
   });
 }
 
@@ -128,8 +138,6 @@ export async function closeTicket(interaction) {
  */
 export async function reopenTicket(interaction) {
   const channel = interaction.channel;
-  const guild = interaction.guild;
-  const supportRoleId = process.env.SUPPORT_ROLE_ID;
 
   const opener = channel.permissionOverwrites.cache.find(
     perm => perm.type === 1 && perm.deny.has(PermissionsBitField.Flags.SendMessages)
@@ -141,28 +149,28 @@ export async function reopenTicket(interaction) {
   if (opener) {
     overwrites.push({
       id: opener.id,
-      allow: [PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel]
+      allow: [PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel],
     });
   }
 
-  // Restore permissions for the support role
-  if (supportRoleId) {
+  // Restore permissions for each support role
+  supportRoleIds.forEach(roleId => {
     overwrites.push({
-      id: supportRoleId,
-      allow: [PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel]
+      id: roleId,
+      allow: [PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel],
     });
-  }
+  });
 
   // Apply updated permissions
   for (const overwrite of overwrites) {
     await channel.permissionOverwrites.edit(overwrite.id, {
       SendMessages: true,
-      ViewChannel: true
+      ViewChannel: true,
     });
   }
 
   await interaction.followUp({
-    content: '🔓 Ticket 已重新開啟，可以繼續對話。'
+    content: '🔓 Ticket 已重新開啟，可以繼續對話。',
   });
 }
 
