@@ -8,7 +8,7 @@ import { loadDeleteSchedule, saveDeleteSchedule } from './feature/deleteschedule
 import Logger from './feature/errorhandle/logger.js';
 import { execute as messageCreateHandler } from './events/messageCreate.js';
 import { handleButtonInteraction } from './events/ButtonReact.js';
-import { execute as interactionCreateHandler } from './events/interaction/interactionCreate.js'; // 更新路徑
+import { execute as interactionCreateHandler } from './events/interaction/interactionCreate.js';
 
 dotenv.config();
 const logger = new Logger();

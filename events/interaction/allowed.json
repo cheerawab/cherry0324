@@ -39,5 +39,8 @@
     },
     "autoban": {
         "whitelist": true
+    },
+    "貼上文宣": {
+        "whitelist": true
     }
 }
