@@ -5,15 +5,15 @@ import Logger from '../../feature/errorhandle/logger.js';
 const logger = new Logger();
 
 export const data = new SlashCommandBuilder()
-    .setName('warn')
-    .setDescription('Issue a warning to a violating user')
+    .setName('警告')
+    .setDescription('向違規用戶發出警告')
     .addUserOption(option =>
         option.setName('user')
-            .setDescription('The user to be warned')
+            .setDescription('違規的用戶')
             .setRequired(true))
     .addStringOption(option =>
         option.setName('violation')
-            .setDescription('Violation type')
+            .setDescription('違規類別')
             .setRequired(true)
             .addChoices(
                 { name: '一般違規', value: '一般違規' },
@@ -25,7 +25,7 @@ export const data = new SlashCommandBuilder()
             ))
     .addStringOption(option =>
         option.setName('reason')
-            .setDescription('Reason for the warning')
+            .setDescription('原因')
             .setRequired(true))
     .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers);
 
@@ -40,12 +40,12 @@ export const execute = async (interaction) => {
         const reason = interaction.options.getString('reason');
 
         if (user.bot) {
-            return interaction.reply({ content: '❌ Cannot warn a bot.', ephemeral: true });
+            return interaction.reply({ content: '❌ 你有沒有考慮直接踢掉它，因為你不能警告機器人.', ephemeral: true });
         }
 
         // 確保載入最新的警告數據
         const warnings = await loadWarnings();
-        logger.info(`📂 Loaded warnings data: ${JSON.stringify(warnings, null, 2)}`);
+        logger.info(`📂 已載入警告資料： ${JSON.stringify(warnings, null, 2)}`);
 
         // 確保 warnings[user.id] 是數組
         if (!Array.isArray(warnings[user.id])) {
@@ -62,15 +62,15 @@ export const execute = async (interaction) => {
 
         // 確保儲存時不覆蓋舊數據
         await saveWarnings(warnings);
-        logger.info(`✅ Warning added for user ${user.id}: ${JSON.stringify(newWarning)}`);
+        logger.info(`✅ 已為用戶 ${user.id} 新增警告：${JSON.stringify(newWarning)}`);
 
         await interaction.reply({
-            content: `⚠️ **${user.username}** has been warned!\n📌 **Violation Type**: ${violation}\n📜 **Reason**: ${reason}\n📂 **Recorded Time**: ${new Date().toLocaleString()}`,
+            content: `⚠️ **${user.username}** 已被警告！\n📌 **違規類別：** ${violation}\n📜 **原因：** ${reason}\n📂 **記錄時間：** ${new Date().toLocaleString()}`,
             ephemeral: true
         });
 
     } catch (error) {
-        logger.error(`❌ Command execution error (/warn): ${error}`);
-        await interaction.reply({ content: '❌ Unable to execute the command. Please try again later.', ephemeral: true });
+        logger.error(`❌ 執行 /warn 指令時出錯：${error}`);
+        await interaction.reply({ content: '❌ 無法執行該指令。請稍後重試。', ephemeral: true });
     }
 };

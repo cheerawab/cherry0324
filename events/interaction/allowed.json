@@ -3,41 +3,44 @@
         "env": "AICHAT_CHANNEL_ID",
         "whitelist": false
     },
-    "sign": {
+    "簽到": {
         "env": "SIGN_CHANNEL_ID",
         "whitelist": false
     },
-    "warn": {
+    "警告": {
         "whitelist": true
     },
-    "warnings": {
+    "查看警告": {
         "whitelist": true
     },
-    "emoji": {
+    "表符": {
         "whitelist": true
     },
-    "clearwarnings": {
+    "清除警告": {
         "whitelist": true
     },
-    "ticket": {
+    "新增客服單面板": {
         "whitelist": true
     },
-    "cancelschedule": {
+    "移除排程": {
         "whitelist": true
     },
-    "deletechannel": {
+    "刪除頻道": {
         "whitelist": true
     },
-    "showdeletechannel": {
+    "顯示頻道刪除時間": {
         "whitelist": true
     },
     "ping": {
         "whitelist": true
     },
-    "cancelautoban": {
+    "移除自動停權": {
         "whitelist": true
     },
-    "autoban": {
+    "設定自動停權": {
+        "whitelist": true
+    },
+    "貼上文宣": {
         "whitelist": true
     }
 }

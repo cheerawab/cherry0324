@@ -98,12 +98,12 @@ function saveMemory(threadId, conversationHistory) {
  */
 export async function askGeminiAI(threadId, userId, userName, question, message) {
     if (!question || typeof question !== 'string') {
-        logger.warn(`⚠️ Invalid question (Thread: ${threadId}, User: ${userId}, Name: ${userName}), skipping processing.`);
+        logger.warn(`⚠️ 無效的問題（問題：${threadId}，用戶：${userId}，名稱：${userName}），跳過處理。`);
         return "❌ 我好像沒聽清楚你的問題，可以再說一次嗎？";
     }
 
     try {
-        logger.info(`Querying Gemini AI (Thread: ${threadId}, User: ${userId}, Name: ${userName}): ${question}`);
+        logger.info(`查詢 Gemini AI（問題：${threadId}，用戶：${userId}，名稱：${userName}）：${question}`);
         
         // Retrieve conversation history
         const conversationHistory = loadMemory(threadId);
@@ -134,14 +134,14 @@ export async function askGeminiAI(threadId, userId, userName, question, message)
 
         logger.info(`📨 送出的 Prompt: ${prompt}`);
         
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
         const result = await model.generateContent(prompt);
         let reply = result.response.text().trim();
         
-        logger.info(`🔍 AI 原始回應 (Thread: ${threadId}, User: ${userId}): ${JSON.stringify(result, null, 2)}`);        
+        logger.info(`🔍 AI 原始回應（問題：${threadId}，用戶：${userId}）：${JSON.stringify(result, null, 2)}`);        
 
         if (!reply) {
-            logger.error(`❌ AI 回應內容為空 (Thread: ${threadId}, User: ${userId})`);
+            logger.error(`❌ AI 回應內容為空（問題：${threadId}，用戶：${userId}）`);
             return "❌ 我好像遇到了一點問題，請稍後再試一次！";
         }
 
@@ -202,7 +202,7 @@ export async function askGeminiAI(threadId, userId, userName, question, message)
 
         return `🌟 ${characterData.nickname}: ${reply}`;
     } catch (error) {
-        console.error('❌ Gemini API error:', error);
+        console.error('❌ Gemini API 錯誤:', error);
         return "❌ 我好像遇到了一點問題，請稍後再試一次！";
     }
 }

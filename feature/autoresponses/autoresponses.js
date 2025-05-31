@@ -11,9 +11,9 @@ function loadResponses() {
     try {
         const data = fs.readFileSync(responsesFile, 'utf8');
         keywordResponses = JSON.parse(data);
-        console.log("✅ Keyword responses have been loaded.");
+        console.log("✅ 關鍵字回應已載入。");
     } catch (error) {
-        console.error("❌ Failed to load responses.json:", error);
+        console.error("❌ 載入 responses.json 失敗：", error);
     }
 }
 
@@ -35,12 +35,12 @@ export async function handleAutoResponse(message) {
         if (Array.isArray(absolute) && absolute.length > 0) {
             if (absolute.includes(content)) {
                 // 加入機率判斷
-                if (Math.random() > 0.5) {
+                if (Math.random() > 0.3) {
                     // 如果完全匹配 absolute，隨機回應
                     if (Array.isArray(responses) && responses.length > 0) {
                         const randomResponse = responses[Math.floor(Math.random() * responses.length)];
                         await message.reply(randomResponse);
-                        console.log(`💬 Auto-replied (absolute match): "${content}" → "${randomResponse}"`);
+                        console.log(`💬 已自動回覆（完全匹配）：「${content}」→「${randomResponse}」`);
                         return true; // 表示已發送回應
                     }
                 }
@@ -55,7 +55,7 @@ export async function handleAutoResponse(message) {
                 if (Array.isArray(responses) && responses.length > 0) {
                     const randomResponse = responses[Math.floor(Math.random() * responses.length)];
                     await message.reply(randomResponse);
-                    console.log(`💬 Auto-replied (keyword match): "${content}" → "${randomResponse}"`);
+                    console.log(`💬 已自動回覆（關鍵字匹配）：「${content}」→「${randomResponse}」`);
                     return true; // 表示已發送回應
                 }
             }
@@ -70,5 +70,5 @@ export async function handleAutoResponse(message) {
  */
 export function reloadResponses() {
     loadResponses();
-    console.log("🔄 Keyword responses have been reloaded.");
+    console.log("🔄 關鍵字回應已重新載入。");
 }

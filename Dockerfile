@@ -17,4 +17,4 @@ COPY . .
 VOLUME ["/app/data"]
 
 # 啟動機器人
-CMD ["node", "app.js"]
+CMD ["node", "deploy-commands.js"]

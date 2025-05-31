@@ -8,8 +8,8 @@ const logger = new Logger();
  * Defines the command data.
  */
 export const data = new SlashCommandBuilder()
-    .setName('showdeleteschedule')
-    .setDescription('Displays the scheduled deletion times for channels.');
+    .setName('顯示頻道刪除時間')
+    .setDescription('顯示頻道的預訂刪除時間');
 
 /**
  * Executes the command to display scheduled channel deletions.
@@ -20,7 +20,7 @@ export const execute = async (interaction) => {
         await interaction.deferReply({ flags: 64 });
 
         if (!interaction.memberPermissions || !interaction.memberPermissions.has(PermissionsBitField.Flags?.ManageChannels)) {
-            return await interaction.editReply('❌ You do not have permission to delete channels!');
+            return await interaction.editReply('❌ 疑?，你好像沒有權限耶!');
         }
 
         // Load delete schedule

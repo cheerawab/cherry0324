@@ -9,33 +9,33 @@ const logger = new Logger();
 const dataFile = path.resolve('/app/data/delete_schedule.json');
 
 /**
- * Loads the delete schedule from the JSON file.
- * @returns {Object} The loaded delete schedule or an empty object if not found.
+ * 從 JSON 檔案載入刪除排程。
+ * @returns {Object} 載入的刪除排程，若不存在則回傳空物件。
  */
 export function loadDeleteSchedule() {
     try {
         if (!fs.existsSync(dataFile)) {
-            logger.warn('⚠️ Delete schedule file does not exist, returning empty object.');
+            logger.warn('⚠️ 刪除排程檔案不存在，回傳空物件。');
             return {};
         }
         const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
-        logger.info('✅ Delete schedule loaded successfully.');
+        logger.info('✅ 刪除排程載入成功。');
         return data;
     } catch (error) {
-        logger.error('❌ Error loading delete schedule:', error);
+        logger.error('❌ 載入刪除排程時發生錯誤：', error);
         return {};
     }
 }
 
 /**
- * Saves the delete schedule to the JSON file.
- * @param {Object} data - The delete schedule data to save.
+ * 將刪除排程儲存到 JSON 檔案。
+ * @param {Object} data - 要儲存的刪除排程資料。
  */
 export function saveDeleteSchedule(data) {
     try {
         fs.writeFileSync(dataFile, JSON.stringify(data, null, 2), 'utf8');
-        logger.info('✅ Delete schedule saved successfully.');
+        logger.info('✅ 刪除排程儲存成功。');
     } catch (error) {
-        logger.error('❌ Error saving delete schedule:', error);
+        logger.error('❌ 儲存刪除排程時發生錯誤：', error);
     }
 }

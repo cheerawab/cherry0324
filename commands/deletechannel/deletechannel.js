@@ -8,15 +8,15 @@ const logger = new Logger();
  * Defines the command data.
  */
 export const data = new SlashCommandBuilder()
-    .setName('deletechannel')
-    .setDescription('Sets a channel deletion time')
+    .setName('刪除頻道')
+    .setDescription('設定頻道的刪除時間')
     .addChannelOption(option =>
         option.setName('channel')
-            .setDescription('The channel to be deleted')
+            .setDescription('要被刪除的頻道')
             .setRequired(true))
     .addStringOption(option =>
         option.setName('date')
-            .setDescription('The deletion date (YYYY-MM-DD)')
+            .setDescription('要被刪除的時間 (YYYY/MM/DD)')
             .setRequired(true));
 
 /**
@@ -29,7 +29,7 @@ export const execute = async (interaction) => {
 
         // Check permissions
         if (!interaction.memberPermissions || !interaction.memberPermissions.has(PermissionsBitField.Flags?.ManageChannels)) {
-            return await interaction.editReply('❌ You do not have permission to delete channels!');
+            return await interaction.editReply('❌ 疑，你沒權限耶!');
         }
 
         // Retrieve channel and date
@@ -38,7 +38,7 @@ export const execute = async (interaction) => {
 
         const deleteDate = new Date(date);
         if (isNaN(deleteDate.getTime())) {
-            return await interaction.editReply('❌ Invalid date format, please use YYYY-MM-DD');
+            return await interaction.editReply('❌ 疑?這是個無效的日期耶，請使用 YYYY/MM/DD');
         }
 
         // Update delete schedule
@@ -46,10 +46,10 @@ export const execute = async (interaction) => {
         deleteSchedule[channel.id] = deleteDate.toISOString();
         saveDeleteSchedule(deleteSchedule);
         
-        logger.info(`📅 Channel ${channel.name} scheduled for deletion on ${date}.`);
-        await interaction.editReply(`🕒 Channel ${channel.name} is set to be deleted on ${date}!`);
+        logger.info(`📅 頻道 ${channel.name} 計劃於 ${date} 刪除。`);
+        await interaction.editReply(`🕒 頻道 ${channel.name} 將於 ${date} 刪除！`);
     } catch (error) {
-        logger.error(`❌ Error executing deletechannel command: ${error.message}`);
-        await interaction.editReply('❌ An error occurred, please try again later!');
+        logger.error(`❌ 執行刪除頻道指令時出錯：${error.message}`);
+        await interaction.editReply('❌ 誒，發生了點問題耶');
     }
 };

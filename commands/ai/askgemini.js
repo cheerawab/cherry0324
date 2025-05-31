@@ -20,16 +20,16 @@ function addAIThread(threadId) {
         if (!data.threads.includes(threadId)) {
             data.threads.push(threadId);
             fs.writeFileSync(aiThreadsFile, JSON.stringify(data, null, 2), 'utf8');
-            logger.info(`✅ AI thread recorded: ${threadId}`);
+            logger.info(`✅ 已記錄 AI 對話串：${threadId}`);
         }
     } catch (error) {
-        logger.error(`❌ Failed to record AI thread: ${error.message}`);
+        logger.error(`❌ 記錄 AI 對話串失敗：${error.message}`);
     }
 }
 
 export const data = new SlashCommandBuilder()
     .setName('和希海說話')
-    .setDescription('Start a private conversation with 聰明版希海.');
+    .setDescription('誒誒，又有什麼有趣的事要跟我說嗎?');
 
 /**
  * Executes the command to create a private AI conversation thread.
@@ -51,10 +51,10 @@ export const execute = async (interaction) => {
         await thread.members.add(interaction.user.id);
         addAIThread(thread.id);
 
-        await interaction.editReply(`✅ Private conversation created: [${thread.name}](<${thread.url}>). Continue the discussion inside the thread!`);
-        logger.info(`🆕 Created private AI conversation thread: ${thread.id} for user ${interaction.user.username}`);
+        await interaction.editReply(`✅ 已建立私人對話串：${thread.url}。快來找我聊天吧！`);
+        logger.info(`🆕 已為用戶 ${interaction.user.username} 建立私人 AI 對話串：${thread.id}`);
     } catch (error) {
-        logger.error(`❌ Error creating private thread: ${error.message}`);
-        await interaction.editReply('❌ Failed to create a private conversation. Please try again later.');
+        logger.error(`❌ 建立私人對話串時發生錯誤：${error.message}`);
+        await interaction.editReply('❌ 建立私人對話失敗，請稍後再試一次。');
     }
 };

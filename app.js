@@ -7,14 +7,13 @@ import schedule from 'node-schedule';
 import { loadDeleteSchedule, saveDeleteSchedule } from './feature/deleteschedule.js';
 import Logger from './feature/errorhandle/logger.js';
 import { execute as messageCreateHandler } from './events/messageCreate.js';
-import { handleButtonInteraction } from './events/ButtonReact.js';
-import { execute as interactionCreateHandler } from './events/interaction/interactionCreate.js'; // 更新路徑
+import { execute as interactionCreateHandler } from './events/interaction/interactionCreate.js';
 
 dotenv.config();
 const logger = new Logger();
 
 /**
- * Initializes the Discord client with necessary intents and partials.
+ * 初始化 Discord 用戶端，包含必要的 intents 與 partials。
  * @type {Client}
  */
 const client = new Client({
@@ -30,7 +29,7 @@ const client = new Client({
 });
 
 /**
- * Collection to store bot commands.
+ * 用來儲存機器人指令的 Collection。
  * @type {Collection<string, any>}
  */
 client.commands = new Collection();
@@ -41,7 +40,7 @@ const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = readdirSync(foldersPath).filter(folder => statSync(path.join(foldersPath, folder)).isDirectory());
 
 /**
- * Loads and registers bot commands.
+ * 載入並註冊機器人指令。
  */
 for (const folder of commandFolders) {
     const commandsPath = path.join(foldersPath, folder);
@@ -52,12 +51,12 @@ for (const folder of commandFolders) {
             .then(command => {
                 if ('data' in command && 'execute' in command) {
                     client.commands.set(command.data.name, command);
-                    logger.info(`Command loaded: ${command.data.name}`);
+                    logger.info(`指令已載入：${command.data.name}`);
                 } else {
-                    logger.warn(`[WARNING] Command in ${filePath} is missing "data" or "execute" attribute.`);
+                    logger.warn(`[警告] ${filePath} 的指令缺少 "data" 或 "execute" 屬性。`);
                 }
             })
-            .catch(error => logger.error(`[ERROR] Failed to load command ${filePath}:`, error));
+            .catch(error => logger.error(`[錯誤] 載入指令 ${filePath} 失敗：`, error));
     }
 }
 
@@ -67,21 +66,21 @@ client.on(Events.MessageCreate, messageCreateHandler);
 client.on(Events.InteractionCreate, interactionCreateHandler);
 
 /**
- * Schedules the deletion of channels based on stored data.
+ * 根據儲存的資料排程頻道刪除。
  */
 function scheduleDeletions() {
     const deleteSchedule = loadDeleteSchedule();
     const now = new Date();
-    logger.info('Starting scheduled deletion process...');
+    logger.info('開始執行排程刪除程序...');
     for (const [channelId, deleteDate] of Object.entries(deleteSchedule)) {
         const deleteTime = new Date(deleteDate);
         if (deleteTime <= now) {
-            logger.info(`Deleting channel ${channelId} immediately.`);
+            logger.info(`立即刪除頻道 ${channelId}。`);
             deleteChannel(channelId);
             delete deleteSchedule[channelId];
             saveDeleteSchedule(deleteSchedule);
         } else {
-            logger.info(`Scheduling channel ${channelId} for deletion at ${deleteTime}.`);
+            logger.info(`已排程頻道 ${channelId} 將於 ${deleteTime} 刪除。`);
             schedule.scheduleJob(deleteTime, () => {
                 deleteChannel(channelId);
                 delete deleteSchedule[channelId];
@@ -92,41 +91,41 @@ function scheduleDeletions() {
 }
 
 /**
- * Deletes a Discord channel by its ID.
- * @param {string} channelId - The ID of the channel to be deleted.
+ * 依頻道 ID 刪除 Discord 頻道。
+ * @param {string} channelId - 要刪除的頻道 ID。
  */
 async function deleteChannel(channelId) {
     try {
         const channel = await client.channels.fetch(channelId);
         if (channel) {
             await channel.delete();
-            logger.info(`Deleted channel: ${channel.name}`);
+            logger.info(`已刪除頻道：${channel.name}`);
         } else {
-            logger.warn(`Channel ${channelId} does not exist or was already deleted.`);
+            logger.warn(`頻道 ${channelId} 不存在或已被刪除。`);
         }
     } catch (err) {
-        logger.error(`Channel deletion failed (ID: ${channelId}): ${err}`);
+        logger.error(`頻道刪除失敗（ID: ${channelId}）：${err}`);
     }
 }
 
 // Client ready event
 client.once(Events.ClientReady, c => {
-    logger.info(`✅ Ready! Signed in as ${c.user.tag}`);
+    logger.info(`✅ 機器人已啟動，登入身份：${c.user.tag}`);
     client.user.setPresence({ status: 'dnd' });
     client.user.setActivity('音之幻想', { type: ActivityType.Listening });
     scheduleDeletions();
     schedule.scheduleJob('0 0 * * *', () => {
-        logger.info('🔄 Running daily channel deletion schedule...');
+        logger.info('🔄 執行每日頻道刪除排程...');
         scheduleDeletions();
     });
 });
 
-// Error handling
-process.on('uncaughtException', error => logger.error('Uncaught Exception:', error));
-process.on('unhandledRejection', (reason, promise) => logger.error('Unhandled Rejection at:', promise, 'reason:', reason));
+// 錯誤處理
+process.on('uncaughtException', error => logger.error('未捕獲例外：', error));
+process.on('unhandledRejection', (reason, promise) => logger.error('未處理的 Promise 拒絕：', promise, '原因：', reason));
 
-// Increase the maximum number of listeners
+// 增加最大監聽器數量
 process.setMaxListeners(20);
 
-// Bot login
-client.login(process.env.DISCORD_TOKEN).catch(error => logger.error('Failed to login:', error));
+// 機器人登入
+client.login(process.env.DISCORD_TOKEN).catch(error => logger.error('登入失敗：', error));

@@ -4,7 +4,7 @@ export async function handleButtonInteraction(interaction) {
     // Return immediately if it's not a button interaction
     if (!interaction.isButton()) return;
 
-    console.log(`Button interaction detected, customId: ${interaction.customId}`);
+    console.log(`偵測到按鈕互動，customId: ${interaction.customId}`);
 
     // Ensure the response is deferred only once to avoid InteractionAlreadyReplied error
     if (!interaction.deferred && !interaction.replied) {
@@ -21,36 +21,36 @@ export async function handleButtonInteraction(interaction) {
     try {
         // Handle ticket creation for different categories
         if (['report', 'coop', 'apply', 'rewards', 'others'].includes(action)) {
-            console.log(`Processing ticket creation for category: ${action}`);
+            console.log(`正在處理客服單類別: ${action}`);
             await createTicket(interaction, action);
-            console.log(`Successfully created ticket for category: ${action}`);
+            console.log(`已成功建立客服單，類別: ${action}`);
             await interaction.followUp({ content: `✅ 客服單已開啟!`, flags: 64 });
         } 
         // Handle ticket closure
         else if (action === 'close') {
-            console.log(`Closing ticket`);
+            console.log(`正在關閉客服單`);
             await closeTicket(interaction);
         } 
         // Handle ticket deletion
         else if (action === 'delete') {
-            console.log(`Deleting ticket`);
+            console.log(`正在刪除客服單`);
             await deleteTicket(interaction);
         } 
         // Handle ticket reopening
         else if (action === 'reopen') {
-            console.log(`Reopening ticket`);
+            console.log(`正在重新開啟客服單`);
             await reopenTicket(interaction);
         } 
         // Handle invalid ticket operations
         else {
-            await interaction.followUp({ content: '⚠️ Invalid ticket operation.', flags: 64 });
+            await interaction.followUp({ content: '⚠️ 無效的客服單操作。', flags: 64 });
         }
     } catch (err) {
-        console.error(`❌ Error occurred during ticket operation:`, err);
+        console.error(`❌ 客服單操作時發生錯誤:`, err);
 
         // If not yet replied, use followUp to report the error
         if (!interaction.replied) {
-            await interaction.followUp({ content: '⚠️ An error occurred during the ticket operation.', flags: 64 });
+            await interaction.followUp({ content: '⚠️ 客服單操作時發生錯誤。', flags: 64 });
         }
     }
 }

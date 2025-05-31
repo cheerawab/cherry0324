@@ -8,7 +8,7 @@ const logger = new Logger();
  */
 export const data = new SlashCommandBuilder()
     .setName('ping')
-    .setDescription('Replies with the bot latency time.');
+    .setDescription('看我有沒有活著.');
 
 /**
  * Executes the ping command.
