@@ -5,11 +5,11 @@ import Logger from '../../feature/errorhandle/logger.js';
 const logger = new Logger();
 
 export const data = new SlashCommandBuilder()
-    .setName('clearwarnings')
-    .setDescription('Clear the most recent warning of a user')
+    .setName('清除警告')
+    .setDescription('清除用戶最近的警告')
     .addUserOption(option =>
         option.setName('user')
-            .setDescription('The user whose warning will be cleared')
+            .setDescription('要被清除警告的用戶')
             .setRequired(true))
     .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers);
 
@@ -20,33 +20,33 @@ export const data = new SlashCommandBuilder()
 export const execute = async (interaction) => {
     try {
         const user = interaction.options.getUser('user');
-        logger.info(`🔍 Attempting to clear warnings for user ID: ${user.id}`);
+        logger.info(`🔍 嘗試清除使用者 ID：${user.id} 的警告`);
 
         // Load warnings data
         const warnings = await loadWarnings();
-        logger.info(`📂 Loaded warnings data: ${JSON.stringify(warnings, null, 2)}`);
+        logger.info(`📂 已載入警告資料： ${JSON.stringify(warnings, null, 2)}`);
 
         // Check if the user has warnings
         if (!warnings[user.id] || warnings[user.id].length === 0) {
-            logger.warn(`⚠️ No warnings found for user ID: ${user.id}`);
-            return interaction.reply({ content: `✅ **${user.username}** has no warnings to clear.`, ephemeral: true });
+            logger.warn(`⚠️ 未發現針對使用者 ID 的警告： ${user.id}`);
+            return interaction.reply({ content: `✅ **${user.username}** 沒有可以清除的警告`, ephemeral: true });
         }
 
         // Remove the most recent warning
         const removedWarning = warnings[user.id].pop();
-        logger.info(`🗑️ Removed warning: ${JSON.stringify(removedWarning)}`);
+        logger.info(`🗑️ 刪除警告： ${JSON.stringify(removedWarning)}`);
 
         // Save updated warnings data
         await saveWarnings(warnings);
-        logger.info(`✅ Successfully updated warnings for user ID: ${user.id}`);
+        logger.info(`✅ 已成功更新使用者：${user.id} 的警告`);
 
         // Reply to the interaction
         await interaction.reply({
-            content: `🗑️ The most recent warning for **${user.username}** has been cleared:\n📌 **Category:** ${removedWarning.violation}\n📜 **Reason:** ${removedWarning.reason} *(Recorded on ${new Date(removedWarning.timestamp).toLocaleString()})*`,
+            content: `🗑️ 已清除 **${user.username}** 最近的一則警告：\n📌 **類別：** ${removedWarning.violation}\n📜 **原因：** ${removedWarning.reason} *(記錄於 ${new Date(removedWarning.timestamp).toLocaleString()})*`,
             ephemeral: true
         });
     } catch (error) {
-        logger.error(`❌ Command execution error (/clearwarnings): ${error}`);
-        await interaction.reply({ content: '❌ Unable to execute the command. Please try again later.', ephemeral: true });
+        logger.error(`❌ 執行指令時出錯 ${error}`);
+        await interaction.reply({ content: '❌ 無法執行該指令。請稍後重試', ephemeral: true });
     }
 };

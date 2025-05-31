@@ -5,11 +5,11 @@ import Logger from '../../feature/errorhandle/logger.js';
 const logger = new Logger();
 
 export const data = new SlashCommandBuilder()
-    .setName('cancelautoban')
-    .setDescription('Cancels AutoBan for a specific channel')
+    .setName('移除自動停權')
+    .setDescription('移除指定頻道的自動停權')
     .addChannelOption(option =>
         option.setName('channel')
-            .setDescription('The channel to remove from AutoBan')
+            .setDescription('要移除的頻道')
             .setRequired(true));
 
 export const execute = async (interaction) => {

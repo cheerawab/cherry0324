@@ -13,19 +13,19 @@ export async function handleAutoResponse(message) {
     const selfIntroductionChannelId = process.env.SELFINTRODUCTION_CHANNEL_ID?.trim();
 
     // 檢查訊息是否來自指定頻道
-    console.log(`🔍 Check channel ID: Message channel ID = ${message.channel.id}, Specify channel ID = ${selfIntroductionChannelId}`);
+    console.log(`🔍 檢查頻道 ID：訊息頻道 ID = ${message.channel.id}，指定頻道 ID = ${selfIntroductionChannelId}`);
     if (message.channel.id !== selfIntroductionChannelId) {
-        console.log(`❌ The message comes from a non-specified channel (ID: ${message.channel.id}), specify the channel as: ${selfIntroductionChannelId}`);
+        console.log(`❌ 訊息來自非指定頻道（ID: ${message.channel.id}），請將指定頻道設為：${selfIntroductionChannelId}`);
         return false; // 如果不是指定頻道，直接返回
     }
 
     try {
         // 為訊息添加反應
         await message.react('<:yyin39:1365321302369374208>'); // 添加揮手表情符號
-        console.log(`✅ Added reaction to message: ${message.content}`);
+        console.log(`✅ 已為訊息添加反應：${message.content}`);
         return true; // 表示成功處理訊息
     } catch (error) {
-        console.error('❌ An error occurred while adding the reaction:', error);
+        console.error('❌ 添加反應時發生錯誤：', error);
         return false; // 表示處理失敗
     }
 }

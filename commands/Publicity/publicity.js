@@ -21,19 +21,13 @@ async function execute(interaction) {
         "音之幻想恭迎你的大駕 [☆](https://discord.gg/KjgWnkzYxr)";
 
     try {
-        // === 請將 interaction.reply 中的 ephemeral: true 移除或設為 false ===
-        await interaction.reply({ content: publicityContent /* , ephemeral: true */ }); // 移除 ephemeral: true
-
-        // 或者明確設定為 false
-        // await interaction.reply({ content: publicityContent, ephemeral: false }); 
+        await interaction.reply({ content: publicityContent });
 
         console.log(`成功執行 /貼上文宣 指令 by ${interaction.user.tag}，發送公開訊息`);
 
     } catch (error) {
-        // ... 錯誤處理部分不變 ...
          console.error(`執行 /貼上文宣 指令時發生錯誤：`, error);
          if (interaction.replied || interaction.deferred) {
-             // 錯誤訊息通常還是讓使用者自己看到就好
              await interaction.followUp({ content: '執行指令時發生錯誤！請稍後再試。', ephemeral: true });
          } else {
              await interaction.reply({ content: '執行指令時發生錯誤！請稍後再試。', ephemeral: true });

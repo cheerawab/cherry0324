@@ -3,23 +3,23 @@ import fs from 'fs';
 import path from 'path';
 
 /**
- * Logger class for managing application logs and crash reports.
+ * Logger 類別，用於管理應用程式日誌與崩潰報告。
  */
 class Logger {
   /**
-   * Creates a Logger instance.
-   * @param {string} [logDir='/app/data/logs'] - The directory where logs will be stored (persistent in Docker).
+   * 建立 Logger 實例。
+   * @param {string} [logDir='/app/data/logs'] - 日誌儲存目錄（Docker 中為持久化路徑）。
    */
   constructor(logDir = '/app/data/logs') {
     this.logDir = logDir;
     this.logFilename = this.getLogFilename();
 
-    // Ensure log directory exists
+    // 確保日誌目錄存在
     if (!fs.existsSync(this.logDir)) {
       fs.mkdirSync(this.logDir, { recursive: true });
     }
 
-    // Initialize the logger instance
+    // 初始化 logger 實例
     this.logger = winston.createLogger({
       levels: winston.config.npm.levels,
       format: winston.format.combine(
@@ -29,27 +29,27 @@ class Logger {
         })
       ),
       transports: [
-        // Console output
+        // 控制台輸出
         new winston.transports.Console({
-          level: 'debug', // Display debug and higher level logs in the console
+          level: 'debug', // 控制台顯示除錯及更高級別的日誌
         }),
-        // Persistent logs stored in Docker volume
+        // 儲存在 Docker 卷中的持久性日誌
         new winston.transports.File({
           filename: path.join(this.logDir, this.logFilename),
-          level: 'info', // Record info and higher level logs
-          maxsize: 10 * 1024 * 1024, // Max file size 10MB
-          maxFiles: 5, // Retain up to 5 log files
+          level: 'info', // 記錄資訊及更高級別的日誌
+          maxsize: 10 * 1024 * 1024, // 最大檔案大小 10MB
+          maxFiles: 5, // 保留最多 5 個日誌檔案
         }),
       ],
     });
 
-    // Setup crash handling
+    // 設定崩潰處理
     this.setupCrashHandlers();
   }
 
   /**
-   * Generates a timestamp-based log filename.
-   * @returns {string} - The generated log filename.
+   * 產生基於時間戳的日誌檔名。
+   * @returns {string} - 產生的日誌檔名。
    * @private
    */
   getLogFilename() {
@@ -58,8 +58,8 @@ class Logger {
   }
 
   /**
-   * Sets up crash handling event listeners.
-   * Captures uncaught exceptions and unhandled promise rejections, generating crash reports.
+   * 設定崩潰處理事件監聽。
+   * 捕捉未捕獲例外與未處理的 Promise 拒絕，並產生崩潰報告。
    * @private
    */
   setupCrashHandlers() {
@@ -75,8 +75,8 @@ class Logger {
   }
 
   /**
-   * Logs a crash report to a file.
-   * @param {Error} error - The caught exception object.
+   * 將崩潰報告寫入檔案。
+   * @param {Error} error - 捕獲的例外物件。
    * @private
    */
   logCrashReport(error) {
@@ -92,32 +92,32 @@ Stack Trace: ${error.stack}
   }
 
   /**
-   * Logs a debug-level message.
-   * @param {string} message - The log message.
+   * 記錄除錯等級訊息。
+   * @param {string} message - 日誌訊息。
    */
   debug(message) {
     this.logger.debug(message);
   }
 
   /**
-   * Logs an info-level message.
-   * @param {string} message - The log message.
+   * 記錄資訊等級訊息。
+   * @param {string} message - 日誌訊息。
    */
   info(message) {
     this.logger.info(message);
   }
 
   /**
-   * Logs a warning-level message.
-   * @param {string} message - The log message.
+   * 記錄警告等級訊息。
+   * @param {string} message - 日誌訊息。
    */
   warn(message) {
     this.logger.warn(message);
   }
 
   /**
-   * Logs an error-level message.
-   * @param {string|Error} err - The log message or error object.
+   * 記錄錯誤等級訊息。
+   * @param {string|Error} err - 日誌訊息或錯誤物件。
    */
   error(err) {
     if (err instanceof Error) {

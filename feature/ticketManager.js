@@ -20,11 +20,11 @@ const ticketCategoryMap = {
 const supportRoleIds = process.env.SUPPORT_ROLE_ID.split(',').map(id => id.trim());
 
 /**
- * Creates a new ticket channel for the user.
+ * 建立新的客服單頻道。
  *
- * @param {Object} interaction - The interaction object from Discord.
- * @param {string} customId - The custom ID representing the ticket category.
- * @param {string} Label - The label for the ticket button.
+ * @param {Object} interaction - Discord 的互動物件。
+ * @param {string} customId - 代表客服單類別的 custom ID。
+ * @param {string} Label - 客服單按鈕的標籤。
  */
 export async function createTicket(interaction, customId, Label) {
   const guild = interaction.guild;
@@ -37,7 +37,7 @@ export async function createTicket(interaction, customId, Label) {
   // Check if a ticket of the same type already exists
   const existing = guild.channels.cache.find(ch => ch.name === channelName);
   if (existing) {
-    return interaction.followUp({ content: '你已經開啟了這類型的 Ticket。', flags: 64 });
+    return interaction.followUp({ content: '你已經開啟了這類型的客服單。', flags: 64 });
   }
 
   // 設定權限覆寫
@@ -75,20 +75,20 @@ export async function createTicket(interaction, customId, Label) {
   const closeButton = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId('ticket_close')
-      .setLabel('🔒 關閉 Ticket')
+      .setLabel('🔒 關閉客服單')
       .setStyle(ButtonStyle.Danger)
   );
 
   await channel.send({
-    content: `🎫 ${member} 的 **${category}** Ticket 已建立，請詳細描述您的問題，${supportRoleIds.map(id => `<@&${id}>`).join(' ')} 會協助您。`,
+    content: `🎫 ${member} 的 **${category}** 客服單已建立，請詳細描述您的問題，${supportRoleIds.map(id => `<@&${id}>`).join(' ')} 會協助您。`,
     components: [closeButton],
   });
 }
 
 /**
- * Closes an existing ticket channel.
+ * 關閉現有的客服單頻道。
  *
- * @param {Object} interaction - The interaction object from Discord.
+ * @param {Object} interaction - Discord 的互動物件。
  */
 export async function closeTicket(interaction) {
   const channel = interaction.channel;
@@ -126,15 +126,15 @@ export async function closeTicket(interaction) {
   );
 
   await interaction.followUp({
-    content: '🔒 此 Ticket 已關閉，若需重新開啟請點擊下方按鈕。',
+    content: '🔒 此客服單已關閉，若需重新開啟請點擊下方按鈕。',
     components: [controlRow],
   });
 }
 
 /**
- * Reopens a closed ticket channel.
+ * 重新開啟已關閉的客服單頻道。
  *
- * @param {Object} interaction - The interaction object from Discord.
+ * @param {Object} interaction - Discord 的互動物件。
  */
 export async function reopenTicket(interaction) {
   const channel = interaction.channel;
@@ -170,14 +170,14 @@ export async function reopenTicket(interaction) {
   }
 
   await interaction.followUp({
-    content: '🔓 Ticket 已重新開啟，可以繼續對話。',
+    content: '🔓 客服單已重新開啟，可以繼續對話。',
   });
 }
 
 /**
- * Deletes a ticket channel.
+ * 刪除客服單頻道。
  *
- * @param {Object} interaction - The interaction object from Discord.
+ * @param {Object} interaction - Discord 的互動物件。
  */
 export async function deleteTicket(interaction) {
   const channel = interaction.channel;
@@ -208,7 +208,7 @@ export async function deleteTicket(interaction) {
     // 將聊天記錄和 JSON 資料發送到日誌頻道
     if (logChannel && logChannel.isTextBased()) {
       await logChannel.send({
-        content: `🗂️ Ticket 紀錄：\`${channel.name}\``,
+        content: `🗂️ 客服單紀錄：\`${channel.name}\``,
         files: [
           transcript, // 聊天記錄
           { attachment: jsonBuffer, name: `${channel.name}-data.json` }, // JSON 資料
@@ -217,14 +217,14 @@ export async function deleteTicket(interaction) {
       logSent = true;
     }
   } catch (err) {
-    console.error('❌ 發送 ticket 紀錄時發生錯誤：', err);
+    console.error('❌ 發送客服單紀錄時發生錯誤：', err);
   }
 
   // 發送回覆給用戶
   await interaction.followUp({
     content: logSent
-      ? '📁 Ticket 紀錄已備份並發送，頻道即將刪除。'
-      : '⚠️ 無法發送紀錄，但仍會刪除 Ticket。',
+      ? '📁 客服單紀錄已備份並發送，頻道即將刪除。'
+      : '⚠️ 無法發送紀錄，但仍會刪除客服單。',
     flags: 64,
   });
 

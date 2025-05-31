@@ -5,11 +5,11 @@ import Logger from '../../feature/errorhandle/logger.js';
 const logger = new Logger();
 
 export const data = new SlashCommandBuilder()
-    .setName('warnings')
-    .setDescription('View a user\'s warning records')
+    .setName('查看警告')
+    .setDescription('查看使用者的警告記錄')
     .addUserOption(option =>
         option.setName('user')
-            .setDescription('The user to check warnings for')
+            .setDescription('要被查看的人')
             .setRequired(true))
 
 /**
@@ -21,26 +21,26 @@ export const execute = async (interaction) => {
         const user = interaction.options.getUser('user');
         const warnings = await loadWarnings(); // Ensure the warnings data is loaded asynchronously
 
-        logger.info(`Checking warnings for user ID: ${user.id}`);
-        logger.info(`Loaded warnings data: ${JSON.stringify(warnings, null, 2)}`);
+        logger.info(`正在檢查使用者 ID：${user.id} 的警告`);
+        logger.info(`已載入警告資料：${JSON.stringify(warnings, null, 2)}`);
 
         // Check if the user has any warnings
         if (!warnings[user.id] || warnings[user.id].length === 0) {
-            return interaction.reply({ content: `✅ **${user.username}** has no warning records.`, ephemeral: true });
+            return interaction.reply({ content: `✅ **${user.username}** 沒有任何警告記錄。`, ephemeral: true });
         }
 
         // Format the warning messages
         const warningMessages = warnings[user.id]
-            .map((warn, index) => `**${index + 1}.** 📌 **Category:** ${warn.violation}\n📜 **Reason:** ${warn.reason} *(Recorded on ${new Date(warn.timestamp).toLocaleString()} )*`)
+            .map((warn, index) => `**${index + 1}.** 📌 **類別：** ${warn.violation}\n📜 **原因：** ${warn.reason} *(記錄於 ${new Date(warn.timestamp).toLocaleString()} )*`)
             .join('\n');
 
         // Reply with the user's warning records
         await interaction.reply({
-            content: `⚠️ **${user.username}**'s warning records:\n${warningMessages}`,
+            content: `⚠️ **${user.username}** 的警告記錄：\n${warningMessages}`,
             ephemeral: true
         });
     } catch (error) {
-        logger.error(`❌ Command execution error (/warnings): ${error}`);
-        await interaction.reply({ content: '❌ Unable to execute the command. Please try again later.', ephemeral: true });
+        logger.error(`❌ 執行 /warnings 指令時出錯：${error}`);
+        await interaction.reply({ content: '❌ 無法執行該指令。請稍後重試。', ephemeral: true });
     }
 };

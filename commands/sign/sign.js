@@ -41,7 +41,7 @@ const images = getLocalImages();
 // Randomly select an image category based on defined probabilities
 function getRandomImage() {
     const random = Math.floor(Math.random() * 100);
-    logger.info(`Generated random value: ${random}`);
+    logger.info(`產生的隨機值：${random}`);
 
     if (random < 10 && images.great_fortune.length > 0)
         return images.great_fortune[Math.floor(Math.random() * images.great_fortune.length)];
@@ -75,8 +75,8 @@ function saveSignInData(data) {
 }
 
 export const data = new SlashCommandBuilder()
-    .setName('sign')
-    .setDescription('Sign in for the day.');
+    .setName('簽到')
+    .setDescription('你今天簽到了嗎?');
 
 export const execute = async (interaction) => {
     try {
@@ -116,21 +116,21 @@ export const execute = async (interaction) => {
         
         // Select a random image
         const randomImage = getRandomImage();
-        logger.info(`Selected image for ${userName}: ${randomImage}`);
+        logger.info(`為 ${userName} 選定的圖片：${randomImage}`);
         
         if (randomImage) {
             const imagePath = path.join(imagesDir, randomImage);
-            logger.info(`Sending image: ${imagePath}`);
+            logger.info(`傳送圖片：${imagePath}`);
             await interaction.editReply({
                 content: `🎉 ${userName}, 你簽到了! 連續: ${userRecord.streak} 天真厲害. 總共: ${userRecord.total} 天.`,
                 files: [imagePath]
             });
         } else {
-            logger.warn(`No image available for ${userName}`);
+            logger.warn(`${userName} 沒有可用的圖片`);
             await interaction.editReply(`🎉 ${userName}, 你簽到了! 連續: ${userRecord.streak} 天真厲害. 總共: ${userRecord.total} 天.`);
         }
     } catch (error) {
-        logger.error(`❌ Error processing sign-in: ${error.message}`);
+        logger.error(`❌ 處理簽到時發生錯誤：${error.message}`);
         await interaction.editReply('❌ 哎呀,出了點問題誒');
     }
 };
