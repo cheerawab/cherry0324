@@ -1,31 +1,38 @@
-import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 
-dotenv.config(); // 載入 .env 檔案
-console.log(`🔍 SELFINTRODUCTIONCHANNEL: ${process.env.SELFINTRODUCTIONCHANNEL}`);
+// 載入 setting.json 並取得自動表符頻道ID
+const settingPath = path.resolve('./events/interaction/setting.json');
+let selfIntroductionChannelId = undefined;
+try {
+    const setting = JSON.parse(fs.readFileSync(settingPath, 'utf8'));
+    selfIntroductionChannelId = setting['自動表符']?.channelid?.trim();
+    console.log(`🔍 從 setting.json 取得自我介紹頻道ID: ${selfIntroductionChannelId}`);
+} catch (err) {
+    console.error('❌ 載入 setting.json 失敗：', err);
+}
 
 /**
  * 偵測訊息是否來自指定頻道，並添加反應
  * @param {import('discord.js').Message} message - Discord 訊息物件
  * @returns {Promise<boolean>} - 是否成功處理訊息
  */
+let selfIntroductionEmoji = undefined;
 export async function handleAutoResponse(message) {
-    // 從 .env 中取得 SELFINTRODUCTIONCHANNEL 的頻道 ID
-    const selfIntroductionChannelId = process.env.SELFINTRODUCTION_CHANNEL_ID?.trim();
-
-    // 檢查訊息是否來自指定頻道
     console.log(`🔍 檢查頻道 ID：訊息頻道 ID = ${message.channel.id}，指定頻道 ID = ${selfIntroductionChannelId}`);
     if (message.channel.id !== selfIntroductionChannelId) {
         console.log(`❌ 訊息來自非指定頻道（ID: ${message.channel.id}），請將指定頻道設為：${selfIntroductionChannelId}`);
-        return false; // 如果不是指定頻道，直接返回
+        return false;
     }
 
     try {
-        // 為訊息添加反應
-        await message.react('<:yyin39:1365321302369374208>'); // 添加揮手表情符號
+        const setting = JSON.parse(fs.readFileSync(settingPath, 'utf8'));
+        selfIntroductionEmoji = setting['自動表符']?.emoji?.trim();
+        await message.react(selfIntroductionEmoji);
         console.log(`✅ 已為訊息添加反應：${message.content}`);
-        return true; // 表示成功處理訊息
+        return true;
     } catch (error) {
         console.error('❌ 添加反應時發生錯誤：', error);
-        return false; // 表示處理失敗
+        return false;
     }
 }

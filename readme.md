@@ -1,8 +1,8 @@
 # ☾ 音之幻想・Yinhuan Fantasy ☽
 
-✨ **這裡是音之幻想**，一個不存在於現實的幻想世界。  
-如同天上點點繁星，看得見卻無法觸及。  
-音，是日常的存在，卻能在此幻化成非凡的連結。  
+✨ **這裡是音之幻想**，一個不存在於現實的幻想世界。
+如同天上點點繁星，看得見卻無法觸及。
+音，是日常的存在，卻能在此幻化成非凡的連結。
 🎵 沉浸於聲音與幻想交織的異空間吧～ .♡.
 
 ---
@@ -16,6 +16,7 @@
 🌟 **不論你是否加入，感謝你閱讀這篇文案，願希望與幻想永遠伴你左右。** 🌟
 
 ### 🌠 𝔂𝓲𝓷𝓱𝓾𝓪𝓷 — 𝓪 𝓱𝓸𝓹𝓮 𝓪𝓵𝔀𝓪𝔂𝓼 𝓫𝓮𝓼𝓲𝓭𝓮 𝔂𝓸𝓾.
+
 ---
 
 ## 🎟️ 加入我們
@@ -27,19 +28,16 @@
 ## 🔧 設定環境變數（若你是開發者想使用此機器人）
 
 請在 `.env` 檔案中設定以下變數，以確保機器人正常運作：
-```
+
 ### 必填
+
+```
 DISCORD_TOKEN=
 CLIENT_ID=
-SUPPORT_ROLE_ID=
-TICKET_LOG_CHANNEL_ID=
 GEMINI_API_KEY=
-SELFINTRODUCTIONCHANNEL=
+
+其餘請在 \events\interaction\setting.json 中設定
 ```
-### 可選填(預設都需要填,可在events\interaction\allowed.json 中更改)
-```
-SELFINTRODUCTION_CHANNEL_ID=
-AICHAT_CHANNEL_ID=
-SIGN_CHANNEL_ID=
-```
+
 📌 **請務必將 `.env` 檔案加入 `.gitignore`，避免公開敏感資訊。**
+
