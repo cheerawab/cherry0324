@@ -4,7 +4,7 @@ import Logger from '../../feature/errorhandle/logger.js';
 import { handleButtonInteraction } from '../ButtonReact.js';
 
 const logger = new Logger();
-const allowedFilePath = path.resolve('./events/interaction/allowed.json');
+const allowedFilePath = path.resolve('./events/interaction/setting.json');
 const allowedCommands = JSON.parse(fs.readFileSync(allowedFilePath, 'utf8'));
 const envVariables = process.env;
 
@@ -36,11 +36,11 @@ export const execute = async (interaction) => {
         logger.info(`✅ 指令 "${commandName}" 已列入白名單，可在任何地方執行。`);
     } else {
         // Check if the command is restricted to a specific channel
-        const envKey = commandConfig.env;
+        const ChannelId = commandConfig.channelid;
         const allowedChannelId = envVariables[envKey];
 
         if (!allowedChannelId) {
-            logger.error(`❌ 指令 "${commandName}" 的環境變數 "${envKey}" 未定義。`);
+            logger.error(`❌ 指令 "${commandName}" 的環境變數 "${ChannelId}" 未定義。`);
             await interaction.reply({
                 content: `❌ 此指令有限制，但允許的頻道尚未設定。`,
                 ephemeral: true,

@@ -1,10 +1,29 @@
 {
+    "以下為頻道其他功能設定":{
+        "選項": "請放置對應的值"
+    },
+
+    "自動表符": {
+        "channelid": "1372135314071617566",
+        "emoji": "<:yyin39:1378596209169662013>"
+    },
+    "客服單": {
+        "log_channelid": "1372134341593006090",
+        "support_roleid": "1372134097270341692,1378599237276663858"
+    },
+
+
+
+    "以下為指令設定": {
+        "channelid": "如果white等於false，請在此處填入頻道ID，否則請將whitelist設為true",
+        "whitelist": "如果為true，該指令就可以在任何地方使用，反之則是只能在channelid定義的頻道使用"
+    },
     "和希海說話": {
-        "env": "AICHAT_CHANNEL_ID",
+        "channelid": "1372135426067922966",
         "whitelist": false
     },
     "簽到": {
-        "env": "SIGN_CHANNEL_ID",
+        "channelid": "1372135492228743199",
         "whitelist": false
     },
     "警告": {

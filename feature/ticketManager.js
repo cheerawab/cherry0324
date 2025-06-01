@@ -7,6 +7,8 @@ import {
   AttachmentBuilder
 } from 'discord.js';
 import { createTranscript } from 'discord-html-transcripts';
+import fs from 'fs';
+import path from 'path';
 
 const ticketCategoryMap = {
   report: '舉報違規',
@@ -16,8 +18,17 @@ const ticketCategoryMap = {
   others: '其他問題'
 };
 
-// 將 SUPPORT_ROLE_ID 解析為陣列
-const supportRoleIds = process.env.SUPPORT_ROLE_ID.split(',').map(id => id.trim());
+// 讀取 setting.json 取得客服單設定
+const settingPath = path.resolve('./events/interaction/setting.json');
+let supportRoleIds = [];
+let logChannelId = undefined;
+try {
+  const setting = JSON.parse(fs.readFileSync(settingPath, 'utf8'));
+  supportRoleIds = setting['客服單']?.support_roleid?.split(',').map(id => id.trim()) || [];
+  logChannelId = setting['客服單']?.log_channelid?.trim();
+} catch (err) {
+  console.error('❌ 載入 setting.json 失敗：', err);
+}
 
 /**
  * 建立新的客服單頻道。
@@ -181,7 +192,6 @@ export async function reopenTicket(interaction) {
  */
 export async function deleteTicket(interaction) {
   const channel = interaction.channel;
-  const logChannelId = process.env.TICKET_LOG_CHANNEL_ID;
   const logChannel = interaction.client.channels.cache.get(logChannelId);
   let logSent = false;
 
