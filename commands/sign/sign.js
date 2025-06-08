@@ -4,7 +4,6 @@ import { SlashCommandBuilder } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
 import Logger from '../../feature/errorhandle/logger.js';
-import setting from '../../events/interaction/setting.json' assert { type: 'json' };
 
 // Manually define __dirname for ES module support
 const __filename = fileURLToPath(import.meta.url);
@@ -81,7 +80,9 @@ export const data = new SlashCommandBuilder()
 
 export const execute = async (interaction) => {
     try {
-        // 讀取 setting.json 的簽到設定
+        // 動態讀取 setting.json，避免 import assert { type: 'json' } 造成載入錯誤
+        const settingPath = path.resolve(__dirname, '../../events/interaction/setting.json');
+        const setting = JSON.parse(fs.readFileSync(settingPath, 'utf8'));
         const signSetting = setting['簽到'];
         const allowedChannelId = signSetting?.channelid;
         const whitelist = signSetting?.whitelist;
