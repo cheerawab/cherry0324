@@ -4,6 +4,7 @@ import { SlashCommandBuilder } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
 import Logger from '../../feature/errorhandle/logger.js';
+import setting from '../../events/interaction/setting.json' assert { type: 'json' };
 
 // Manually define __dirname for ES module support
 const __filename = fileURLToPath(import.meta.url);
@@ -80,6 +81,15 @@ export const data = new SlashCommandBuilder()
 
 export const execute = async (interaction) => {
     try {
+        // 讀取 setting.json 的簽到設定
+        const signSetting = setting['簽到'];
+        const allowedChannelId = signSetting?.channelid;
+        const whitelist = signSetting?.whitelist;
+        const currentChannelId = interaction.channelId;
+        if (!whitelist && allowedChannelId && currentChannelId !== allowedChannelId) {
+            return await interaction.reply({ content: '❌ 你只能在指定頻道使用此指令！', ephemeral: true });
+        }
+
         await interaction.deferReply();
         
         const userId = interaction.user.id;
