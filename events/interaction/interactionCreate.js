@@ -36,18 +36,15 @@ export const execute = async (interaction) => {
         logger.info(`✅ 指令 "${commandName}" 已列入白名單，可在任何地方執行。`);
     } else {
         // Check if the command is restricted to a specific channel
-        const ChannelId = commandConfig.channelid;
-        const allowedChannelId = envVariables[envKey];
-
+        const allowedChannelId = commandConfig.channelid;
         if (!allowedChannelId) {
-            logger.error(`❌ 指令 "${commandName}" 的環境變數 "${ChannelId}" 未定義。`);
+            logger.error(`❌ 指令 "${commandName}" 的 channelid 未定義。`);
             await interaction.reply({
                 content: `❌ 此指令有限制，但允許的頻道尚未設定。`,
                 ephemeral: true,
             });
             return;
         }
-
         if (interaction.channelId !== allowedChannelId) {
             logger.warn(`❌ 指令 "${commandName}" 僅限於頻道 <#${allowedChannelId}> 使用。`);
             await interaction.reply({
@@ -56,7 +53,6 @@ export const execute = async (interaction) => {
             });
             return;
         }
-
         logger.info(`✅ 指令 "${commandName}" 已允許於頻道 <#${allowedChannelId}>。`);
     }
 
