@@ -4,12 +4,12 @@
     },
 
     "自動表符": {
-        "channelid": "1357162102720299098",
-        "emoji": "<:yyin39:1378596209169662013>"
+        "channelid": "",
+        "emoji": ""
     },
     "客服單": {
-        "log_channelid": "1358947854181466303",
-        "support_roleid": "1357328376230314244, 1360475658324672532"
+        "log_channelid": "",
+        "support_roleid": ""
     },
 
 
@@ -19,11 +19,11 @@
         "whitelist": "如果為true，該指令就可以在任何地方使用，反之則是只能在channelid定義的頻道使用"
     },
     "和希海說話": {
-        "channelid": "1363906409682702618",
+        "channelid": "",
         "whitelist": false
     },
     "簽到": {
-        "channelid": "1365541126794121306",
+        "channelid": "",
         "whitelist": false
     },
     "警告": {

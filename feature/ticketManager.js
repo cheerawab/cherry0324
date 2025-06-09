@@ -24,7 +24,9 @@ let supportRoleIds = [];
 let logChannelId = undefined;
 try {
   const setting = JSON.parse(fs.readFileSync(settingPath, 'utf8'));
-  supportRoleIds = setting['客服單']?.support_roleid?.split(',').map(id => id.trim()) || [];
+  supportRoleIds = setting['客服單']?.support_roleid?.split(',')
+    .map(id => id.trim())
+    .filter(id => /^\d+$/.test(id)); // 只保留純數字的有效角色ID
   logChannelId = setting['客服單']?.log_channelid?.trim();
 } catch (err) {
   console.error('❌ 載入 setting.json 失敗：', err);
@@ -51,27 +53,34 @@ export async function createTicket(interaction, customId, Label) {
     return interaction.followUp({ content: '你已經開啟了這類型的客服單。', flags: 64 });
   }
 
+  // 僅保留伺服器內存在的支援角色 ID
+  const validSupportRoleIds = supportRoleIds.filter(roleId => guild.roles.cache.has(roleId));
+
   // 設定權限覆寫
   const permissionOverwrites = [
     {
       id: guild.id,
       deny: [PermissionsBitField.Flags.ViewChannel],
+      type: 'role',
     },
     {
       id: member.id,
       allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
+      type: 'member',
     },
     {
       id: botId,
       allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
+      type: 'member',
     },
   ];
 
-  // 為每個 supportRoleId 添加權限覆寫
-  supportRoleIds.forEach(roleId => {
+  // 為每個有效 supportRoleId 添加權限覆寫
+  validSupportRoleIds.forEach(roleId => {
     permissionOverwrites.push({
       id: roleId,
       allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
+      type: 'role',
     });
   });
 
