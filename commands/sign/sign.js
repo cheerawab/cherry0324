@@ -88,10 +88,12 @@ export const execute = async (interaction) => {
         const whitelist = signSetting?.whitelist;
         const currentChannelId = interaction.channelId;
         if (!whitelist && allowedChannelId && currentChannelId !== allowedChannelId) {
-            return await interaction.reply({ content: '❌ 你只能在指定頻道使用此指令！', ephemeral: true });
+            return await interaction.reply({ content: '❌ 你只能在指定頻道使用此指令！', flags: 64 });
         }
 
         await interaction.deferReply();
+        await wait(4_000);
+
         
         const userId = interaction.user.id;
         const userName = interaction.user.username;
