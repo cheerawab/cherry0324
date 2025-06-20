@@ -74,6 +74,10 @@ function saveSignInData(data) {
     fs.writeFileSync(signInFile, JSON.stringify(data, null, 4), 'utf8');
 }
 
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export const data = new SlashCommandBuilder()
     .setName('簽到')
     .setDescription('你今天簽到了嗎?');
