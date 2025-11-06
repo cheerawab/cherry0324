@@ -7,6 +7,11 @@
         "channelid": "",
         "emoji": ""
     },
+    "自動關鍵字回覆": {
+        "channels": [
+            ""
+        ]
+    },
     "客服單": {
         "log_channelid": "",
         "support_roleid": ""
