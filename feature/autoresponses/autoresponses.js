@@ -90,9 +90,18 @@ function loadGlobalChannelWhitelist() {
                 configNode.whitelist
             );
 
-            if (channels.length > 0) {
-                console.log(`🔧 從 ${path.basename(settingsFile)} 載入自動回覆頻道設定：${channels.join(', ')}`);
-                return channels;
+            // Filter out placeholder text
+            const validChannels = channels.filter(id => !id.includes('請在此填入'));
+
+            if (validChannels.length > 0) {
+                console.log(`🔧 從 ${path.basename(settingsFile)} 載入自動回覆頻道設定：${validChannels.join(', ')}`);
+                return validChannels;
+            }
+
+            // If the config exists but is empty, return a special value to indicate "block all"
+            if (channels.length === 0) {
+                console.log(`🔧 從 ${path.basename(settingsFile)} 偵測到空的頻道設定，將禁用所有頻道的自動回覆。`);
+                return ['__EMPTY_WHITELIST__']; 
             }
         } catch (error) {
             console.error(`⚠️ 載入 ${path.basename(settingsFile)} 時發生錯誤：`, error);
@@ -113,6 +122,11 @@ loadResponses();
 export async function handleAutoResponse(message) {
     const content = message.content.trim().toLowerCase();
     const channelId = message.channel.id;
+
+    // If the whitelist has the special "empty" value, block all channels.
+    if (globalChannelWhitelist.length === 1 && globalChannelWhitelist[0] === '__EMPTY_WHITELIST__') {
+        return false;
+    }
 
     if (globalChannelWhitelist.length > 0 && !globalChannelWhitelist.includes(channelId)) {
         return false; // Channel is not globally whitelisted
